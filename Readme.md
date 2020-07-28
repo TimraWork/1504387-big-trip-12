@@ -1,7 +1,7 @@
 # Личный проект «Большое путешествие» [![Build status][travis-image]][travis-url]
 
 * Студент: [Эльмира Мухамеджанова](https://up.htmlacademy.ru/ecmascript/12/user/1504387).
-* Наставник: `Неизвестно`.
+* Наставник: [Дмитрий Гуляев](https://htmlacademy.ru/profile/id87930).
 
 ---
 
