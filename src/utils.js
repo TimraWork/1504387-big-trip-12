@@ -32,12 +32,17 @@ export const formatTitle = (type) => {
 
 export const formatTime = (dates) => {
   const times = dates.toLocaleString([], {hour: `2-digit`, minute: `2-digit`});
-
   return times.split(`,`).join(` — `);
 };
 
-export const getDuration = (start, end) => {
-  const duration = start - end;
+export const getDuration = (dateRange) => {
+  const [d1, d2] = dateRange;
+  const interval = new Date(d2 - d1);
 
-  return duration;
+
+  const diffDay = interval.getUTCDate() - 1 ? interval.getUTCDate() - 1 + `D` : ``;
+  const diffHour = interval.getUTCHours() ? interval.getUTCHours() + `H` : ``;
+  const diffMinutes = interval.getUTCMinutes() ? interval.getUTCMinutes() + `M` : ``;
+
+  return `${diffDay} ${diffHour} ${diffMinutes}`;
 };

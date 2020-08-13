@@ -1,4 +1,4 @@
-import {formatTime, getDuration, formatTitle} from '../utils.js';
+import {formatTime, getDuration, formatTitle, getHumanizeTimeInterval} from '../utils.js';
 
 const offerTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -8,7 +8,6 @@ const offerTemplate = (label, price) => {
             </li>`;
 };
 
-
 const createOffersTemplate = (offers) => {
   if (offers.length) {
     return `<h4 class="visually-hidden">Offers:</h4>
@@ -17,6 +16,8 @@ const createOffersTemplate = (offers) => {
         .map((offer)=> offerTemplate(offer.label, offer.price))
         .join(``)}
     </ul>`;
+  } else {
+    return ``;
   }
 };
 
@@ -26,7 +27,9 @@ export const createEventTemplate = (event) => {
 
   const formattedType = formatTitle(type);
   const times = formatTime(dateRange);
-  const duration = getDuration(20, 10);
+  const duration = getDuration(dateRange);
+  console.log(dateRange);
+  // const duration = getHumanizeTimeInterval(dateRange[1] - dateRange[0]);
 
   const offersTemplate = createOffersTemplate(offers);
 
@@ -44,7 +47,7 @@ export const createEventTemplate = (event) => {
             <!--&mdash;
             <time class="event__end-time" datetime="2019-03-18T16:05">16:05</time>-->
           </p>
-          <p class="event__duration">1H 35M ${duration}</p>
+          <p class="event__duration">${duration}</p>
         </div>
 
         <p class="event__price">

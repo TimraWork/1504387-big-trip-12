@@ -19,7 +19,7 @@ const MaxTime = {
   SECONDS: 59,
   MS_SECONDS: 999,
 };
-export const DAYS_RANGE = [-3, 3];
+export const DAYS_RANGE = [-1, 1];
 
 
 const generateType = () => {
@@ -37,7 +37,9 @@ const generatePrice = () => {
 
 const generateDescription = () => {
   const descriptions = DESCRIPTION.split(`.`).slice(0, -1);
-  return shuffleArray(descriptions).slice(0, getRandomInteger(0, descriptions.length - 1)).join(`.`);
+  let description = shuffleArray(descriptions).slice(0, getRandomInteger(0, descriptions.length - 1)).join(`.`);
+  description = description.length ? description + `.` : ``;
+  return description;
 };
 
 const generatePhotos = () => {

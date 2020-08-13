@@ -2,13 +2,6 @@ import {EVENT_COUNT} from './const.js';
 import {render} from './utils.js';
 import {generateEvent} from './mock/event.js';
 
-const events = new Array(EVENT_COUNT).fill().map(generateEvent).sort((a, b)=> {
-  // console.log(`a.dateRange[0].getTime() = `, a.dateRange[0].getDate(), a.dateRange[0].toLocaleString(`en-US`, {month: `long`}));
-  // console.log(`b.dateRange[0].getTime() = `, b.dateRange[0].getTime());
-  return b.dateRange[0].getTime() - a.dateRange[0].getTime();
-}).reverse();
-console.log(`events ==== `, events);
-
 import {createInfoTemplate} from './view/info.js';
 import {createMenuTemplate} from './view/menu.js';
 import {createFilterTemplate} from './view/filter.js';
@@ -27,11 +20,24 @@ render(titleMenu, createMenuTemplate(), `afterend`);
 render(titleFilter, createFilterTemplate(), `afterend`);
 render(event, createSortTemplate(), `beforeend`);
 
-render(event, createEventFormTemplate(events[0]), `beforeend`);
-render(event, createEventDayTemplate(), `beforeend`);
+const events = new Array(EVENT_COUNT).fill().map(generateEvent).sort((a, b)=> {
+  return b.dateRange[0].getTime() - a.dateRange[0].getTime();
+}).reverse();
 
-const eventsList = event.querySelector(`.trip-events__list`);
+render(event, createEventFormTemplate(events[0]), `beforeend`);
+
+const days = new Set(events.map((day) => {
+  return day.dateRange[0].toLocaleDateString(`en-En`);
+}));
+
+let index = 1;
+for (const day of days.keys()) {
+  render(event, createEventDayTemplate(index++, day), `beforeend`);
+}
 
 for (let i = 1; i < EVENT_COUNT; i++) {
+  const eventDay = events[i].dateRange[0].toLocaleDateString(`en-En`);
+  const eventsList = event.querySelector(`.trip-events__list[data-day="${eventDay}"]`);
+
   render(eventsList, createEventTemplate(events[i]), `beforeend`);
 }
