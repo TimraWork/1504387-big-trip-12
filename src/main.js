@@ -26,11 +26,12 @@ render(header, createInfoTemplate(), `afterbegin`);
 render(titleMenu, createMenuTemplate(), `afterend`);
 render(titleFilter, createFilterTemplate(), `afterend`);
 render(event, createSortTemplate(), `beforeend`);
-render(event, createEventFormTemplate(), `beforeend`);
+
+render(event, createEventFormTemplate(events[0]), `beforeend`);
 render(event, createEventDayTemplate(), `beforeend`);
 
 const eventsList = event.querySelector(`.trip-events__list`);
 
-for (let i = 0; i < EVENT_COUNT; i++) {
+for (let i = 1; i < EVENT_COUNT; i++) {
   render(eventsList, createEventTemplate(events[i]), `beforeend`);
 }
