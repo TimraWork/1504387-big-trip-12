@@ -1,4 +1,4 @@
-import {formatTime, getDuration, formatTitle, getHumanizeTimeInterval} from '../utils.js';
+import {formatTime, formatDateTime, getDuration, formatType} from '../utils.js';
 
 const offerTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -25,11 +25,12 @@ export const createEventTemplate = (event) => {
 
   const {type, city, dateRange, price, offers} = event;
 
-  const formattedType = formatTitle(type);
-  const times = formatTime(dateRange);
+  const typeWithLabel = formatType(type);
+  const startTime = formatTime(dateRange[0]);
+  const endTime = formatTime(dateRange[1]);
+  const startDateTime = formatDateTime(dateRange[0]);
+  const endDateTime = formatDateTime(dateRange[1]);
   const duration = getDuration(dateRange);
-  console.log(dateRange);
-  // const duration = getHumanizeTimeInterval(dateRange[1] - dateRange[0]);
 
   const offersTemplate = createOffersTemplate(offers);
 
@@ -39,13 +40,13 @@ export const createEventTemplate = (event) => {
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
         </div>
-        <h3 class="event__title">${formattedType} ${city}</h3>
+        <h3 class="event__title">${typeWithLabel} ${city}</h3>
 
         <div class="event__schedule">
           <p class="event__time">
-            <time class="event__start-time" datetime="2019-03-18T14:30">${times}</time>
-            <!--&mdash;
-            <time class="event__end-time" datetime="2019-03-18T16:05">16:05</time>-->
+            <time class="event__start-time" datetime="${startDateTime}">${startTime}</time>
+            &mdash;
+            <time class="event__end-time" datetime="${endDateTime}">${endTime}</time>
           </p>
           <p class="event__duration">${duration}</p>
         </div>

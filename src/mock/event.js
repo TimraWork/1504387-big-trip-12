@@ -5,7 +5,7 @@ const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `San Francisco`, `Miami`, `Mo
 const DESCRIPTION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
 const PHOTO_URLS = [`img/photos/1.jpg`, `img/photos/2.jpg`, `img/photos/3.jpg`, `img/photos/4.jpg`, `img/photos/5.jpg`];
 const PRICE_RANGE = [10, 1000];
-const PRICE_DIVISOR = 10;
+const GAP = 10;
 const OFFER = [
   {name: `luggage`, label: `Add luggage`, price: 30},
   {name: `comfort`, label: `Switch to comfort`, price: 100},
@@ -21,7 +21,6 @@ const MaxTime = {
 };
 export const DAYS_RANGE = [-1, 1];
 
-
 const generateType = () => {
   const types = [...EVENT_TYPE.movements, ...EVENT_TYPE.activities];
   return types[getRandomInteger(0, types.length - 1)];
@@ -32,7 +31,7 @@ const generateCity = () => {
 };
 
 const generatePrice = () => {
-  return getRandomInteger(...PRICE_RANGE, PRICE_DIVISOR);
+  return getRandomInteger(...PRICE_RANGE, GAP);
 };
 
 const generateDescription = () => {
@@ -53,7 +52,7 @@ const generateOffers = () => {
 const generateTime = () => {
   const time = {};
   for (let [key, value] of Object.entries(MaxTime)) {
-    time[key] = getRandomInteger(0, value);
+    time[key] = getRandomInteger(0, value, GAP);
   }
   return time;
 };
@@ -80,7 +79,7 @@ export const generateEvent = () => {
     city: generateCity(),
     price: generatePrice(),
     offers: generateOffers(),
-    info: {
+    destination: {
       description: generateDescription(),
       photos: generatePhotos(),
     }

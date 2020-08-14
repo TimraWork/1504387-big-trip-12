@@ -1,14 +1,6 @@
-import {formatTime, getDuration, formatTitle} from '../utils.js';
+import {formatType, formatDateTime} from '../utils.js';
 
-// const offerTemplate = (label, price) => {
-//   return `<li class="event__offer">
-//               <span class="event__offer-title">${label}</span>
-//               &plus;
-//               &euro;&nbsp;<span class="event__offer-price">${price}</span>
-//             </li>`;
-// };
-
-const offerTemplate = (name, label, price) => {
+const createOfferItemTemplate = (name, label, price) => {
   return `<div class="event__offer-selector">
             <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}">
             <label class="event__offer-label" for="event-offer-${name}-1">
@@ -25,9 +17,11 @@ const createOffersTemplate = (offers) => {
       <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
+
         ${offers
-          .map((offer)=> offerTemplate(offer.name, offer.label, offer.price))
+          .map((offer)=> createOfferItemTemplate(offer.name, offer.label, offer.price))
           .join(``)}
+
         </div>
       </section>`;
   } else {
@@ -52,13 +46,13 @@ const createPhotosTemplate = (photos) => {
 
 export const createEventFormTemplate = (event) => {
 
-  const {type, city, info, dateRange, price, offers} = event;
+  const {type, city, destination, price, offers, dateRange} = event;
 
-  const title = formatTitle(type, city);
-  // const times = formatTime(dateRange);
-  // const duration = getDuration(20, 10);
+  const typeWithLabel = formatType(type);
+  const startDateTime = formatDateTime(dateRange[0]);
+  const endDateTime = formatDateTime(dateRange[1]);
 
-  const photosTemplate = createPhotosTemplate(info.photos);
+  const photosTemplate = createPhotosTemplate(destination.photos);
   const offersTemplate = createOffersTemplate(offers);
 
   return (
@@ -134,9 +128,9 @@ export const createEventFormTemplate = (event) => {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${title}
+            ${typeWithLabel}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -149,12 +143,12 @@ export const createEventFormTemplate = (event) => {
           <label class="visually-hidden" for="event-start-time-1">
             From
           </label>
-          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="18/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateTime}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
-          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="18/03/19 00:00">
+          <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateTime}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -162,7 +156,7 @@ export const createEventFormTemplate = (event) => {
             <span class="visually-hidden">Price</span>
             &euro;
           </label>
-          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="">
+          <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
         </div>
 
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -174,7 +168,7 @@ export const createEventFormTemplate = (event) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${info.description}</p>
+          <p class="event__destination-description">${destination.description}</p>
 
           ${photosTemplate}
 

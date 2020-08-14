@@ -1,8 +1,8 @@
-import {formatTime, getDuration, formatTitle} from '../utils.js';
+import {formatMonthDate} from '../utils.js';
 
 export const createEventDayTemplate = (index, day) => {
 
-  const formattedDate = new Date(day).toLocaleString(`en-En`, {month: `short`, day: `2-digit`});
+  const formattedDate = formatMonthDate(new Date(day));
 
   return (
     `<ul class="trip-days">

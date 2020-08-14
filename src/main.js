@@ -1,5 +1,5 @@
 import {EVENT_COUNT} from './const.js';
-import {render} from './utils.js';
+import {render, formatDate} from './utils.js';
 import {generateEvent} from './mock/event.js';
 
 import {createInfoTemplate} from './view/info.js';
@@ -27,7 +27,7 @@ const events = new Array(EVENT_COUNT).fill().map(generateEvent).sort((a, b)=> {
 render(event, createEventFormTemplate(events[0]), `beforeend`);
 
 const days = new Set(events.map((day) => {
-  return day.dateRange[0].toLocaleDateString(`en-En`);
+  return formatDate(day.dateRange[0]);
 }));
 
 let index = 1;
@@ -36,7 +36,7 @@ for (const day of days.keys()) {
 }
 
 for (let i = 1; i < EVENT_COUNT; i++) {
-  const eventDay = events[i].dateRange[0].toLocaleDateString(`en-En`);
+  const eventDay = formatDate(events[i].dateRange[0]);
   const eventsList = event.querySelector(`.trip-events__list[data-day="${eventDay}"]`);
 
   render(eventsList, createEventTemplate(events[i]), `beforeend`);
