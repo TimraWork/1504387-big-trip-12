@@ -54,6 +54,12 @@ const sumItems = (items) => {
   return items.map((it)=>it.price).reduce((a, b) => (a + b), 0);
 };
 
+export const getEventsDay = (events) => {
+  const dates = events.map((day) => formatDate(day.dateRange[0]));
+  const days = [...new Set(dates)];
+  return days;
+};
+
 export const getTotalPrice = (items) => {
   let totalOffers = 0;
   for (const item of items) {

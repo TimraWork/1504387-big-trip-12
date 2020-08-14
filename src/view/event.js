@@ -1,6 +1,6 @@
 import {formatTime, formatDateTime, getDuration, formatType} from '../utils.js';
 
-const offerTemplate = (label, price) => {
+const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
               <span class="event__offer-title">${label}</span>
               &plus;
@@ -13,7 +13,7 @@ const createOffersTemplate = (offers) => {
     return `<h4 class="visually-hidden">Offers:</h4>
     <ul class="event__selected-offers">
       ${offers
-        .map((offer)=> offerTemplate(offer.label, offer.price))
+        .map((offer)=> createOfferTemplate(offer.label, offer.price))
         .join(``)}
     </ul>`;
   } else {
