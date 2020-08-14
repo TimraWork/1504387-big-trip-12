@@ -29,12 +29,12 @@ render(event, createSortTemplate(), `beforeend`);
 render(event, createEventFormTemplate(events[0]), `beforeend`);
 
 const renderEventsDays = () => {
-
-  const days = new Set(events.map((day) => {
+  const days = new Set(events.slice(0, -1).map((day) => {
     return formatDate(day.dateRange[0]);
   }));
 
   let index = 1;
+
   for (const day of days.keys()) {
     render(event, createEventDayTemplate(index++, day), `beforeend`);
   }
@@ -50,5 +50,7 @@ const renderEvents = () => {
   }
 };
 
-renderEventsDays();
-renderEvents();
+if (events.length) {
+  renderEventsDays();
+  renderEvents();
+}

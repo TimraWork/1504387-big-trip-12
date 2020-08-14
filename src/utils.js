@@ -50,14 +50,18 @@ const getDiff = (countTime, label) => {
   return countTime ? countTime + label : ``;
 };
 
+const sumItems = (items) => {
+  return items.map((it)=>it.price).reduce((a, b) => (a + b), 0);
+};
+
 export const getTotalPrice = (items) => {
   let totalOffers = 0;
   for (const item of items) {
-    const sumPrices = item.offers.reduce((a, b) => ({price: a.price + b.price}));
+    const sumPrices = sumItems(item.offers);
     totalOffers += sumPrices;
   }
-  const totalPrice = items.reduce((a, b) => ({price: a.price + b.price}));
-  return totalPrice.price + totalOffers.price;
+  const totalPrice = sumItems(items);
+  return totalPrice + totalOffers;
 };
 
 export const getEventCities = (items) => {
