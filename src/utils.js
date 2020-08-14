@@ -1,13 +1,13 @@
-import {EVENT_TYPE} from './const.js';
+import {EVENT_TYPE, MAX_INFO_CITIES} from './const.js';
 
-export const shuffleArray = (arr) => {
-  for (let i = arr.length - 1; i > 0; i--) {
+export const shuffleArray = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
     let j = Math.floor(Math.random() * (i + 1));
-    let temp = arr[i];
-    arr[i] = arr[j];
-    arr[j] = temp;
+    let temp = array[i];
+    array[i] = array[j];
+    array[j] = temp;
   }
-  return arr;
+  return array;
 };
 
 export const getRandomInteger = (min, max, num = 1) => {
@@ -48,6 +48,39 @@ export const formatMonthDate = (date) => {
 
 const getDiff = (countTime, label) => {
   return countTime ? countTime + label : ``;
+};
+
+export const getTotalPrice = (items) => {
+  let totalOffers = 0;
+  for (const item of items) {
+    const sumPrices = item.offers.reduce((a, b) => ({price: a.price + b.price}));
+    totalOffers += sumPrices;
+  }
+  const totalPrice = items.reduce((a, b) => ({price: a.price + b.price}));
+  return totalPrice.price + totalOffers.price;
+};
+
+export const getEventCities = (items) => {
+  let cities = items.map((item) => item.city);
+  if (cities.length > MAX_INFO_CITIES) {
+    cities = `${cities[0]}  &mdash; ... &mdash; ${cities[cities.length - 1]}`;
+  } else {
+    cities = cities.join(` &mdash; `);
+  }
+  return cities;
+};
+
+export const getEventDates = (items) => {
+  let dates = items.map((item) => item.dateRange);
+  const startDate = dates[0][0];
+  const endDate = dates[dates.length - 1][1];
+  if (startDate.getMonth() === endDate.getMonth()) {
+    dates = `${formatMonthDate(startDate)} &mdash; ${endDate.getDate()}`;
+  } else {
+    dates = `${formatMonthDate(startDate)} &mdash; ${formatMonthDate(endDate)}`;
+
+  }
+  return dates;
 };
 
 export const getDuration = (dateRange) => {
