@@ -2,24 +2,34 @@ import {getRandomInteger, shuffleArray} from '../utils.js';
 import {EVENT_TYPE} from '../const.js';
 
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `San Francisco`, `Miami`, `Mountain View`, `London`];
-const DESCRIPTION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
+const DESTINATION = `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`;
+const MAX_DESTINATIONS = 5;
 const PHOTO_URLS = [`img/photos/1.jpg`, `img/photos/2.jpg`, `img/photos/3.jpg`, `img/photos/4.jpg`, `img/photos/5.jpg`];
 const PRICE_RANGE = [10, 400];
+const DAYS_RANGE = [-1, 1];
 const GAP = 10;
-const OFFER = [
-  {name: `luggage`, label: `Add luggage`, price: 30},
-  {name: `comfort`, label: `Switch to comfort`, price: 100},
-  {name: `meal`, label: `Add meal`, price: 15},
-  {name: `seats`, label: `Choose seats`, price: 5},
-  {name: `train`, label: `Travel by train`, price: 40},
-];
 const MaxTime = {
   HOURS: 23,
   MINUTES: 59,
   SECONDS: 59,
   MS_SECONDS: 999,
 };
-export const DAYS_RANGE = [-1, 1];
+const OFFERS = [
+  {name: `seats`, label: `Choose seats`, price: 5, isChecked: Boolean(getRandomInteger(0, 1)), types: [`flight`, `train`]},
+  {name: `meal`, label: `Add meal`, price: 15, isChecked: Boolean(getRandomInteger(0, 1)), types: [`flight`, `train`, `ship`]},
+  {name: `uber`, label: `Order Uber`, price: 20, isChecked: Boolean(getRandomInteger(0, 1)), types: [`taxi`]},
+  {name: `luggage`, label: `Add luggage`, price: 30, isChecked: Boolean(getRandomInteger(0, 1)), types: [`flight`, `train`, `ship`, `bus`, `transport`, `taxi`]},
+  {name: `lunch`, label: `Lunch in city`, price: 30, isChecked: Boolean(getRandomInteger(0, 1)), types: [`sightseeing`, `check-in`]},
+  {name: `train`, label: `Travel by train`, price: 40, isChecked: Boolean(getRandomInteger(0, 1)), types: [`check-in`]},
+  {name: `tickets`, label: `Book tickets`, price: 40, isChecked: Boolean(getRandomInteger(0, 1)), types: [`sightseeing`, `bus`]},
+  {name: `breakfast`, label: `Add breakfast`, price: 50, isChecked: Boolean(getRandomInteger(0, 1)), types: [`sightseeing`, `check-in`]},
+  {name: `comfort`, label: `Switch to comfort`, price: 100, isChecked: Boolean(getRandomInteger(0, 1)), types: [`flight`, `train`, `ship`, `taxi`]},
+  {name: `rent`, label: `Rent a car`, price: 200, isChecked: Boolean(getRandomInteger(0, 1)), types: [`drive`]},
+];
+
+const generateOffers = (type) => {
+  return OFFERS.filter((offer)=>offer.types.includes(type));
+};
 
 const generateType = () => {
   const types = [...EVENT_TYPE.movements, ...EVENT_TYPE.activities];
@@ -35,18 +45,14 @@ const generatePrice = () => {
 };
 
 const generateDescription = () => {
-  const descriptions = DESCRIPTION.split(`.`).slice(0, -1);
-  let description = shuffleArray(descriptions).slice(0, getRandomInteger(0, descriptions.length - 1)).join(`.`);
-  description = description.length ? description + `.` : ``;
-  return description;
+  const destinations = DESTINATION.split(`.`).slice(0, -1);
+  let destination = shuffleArray(destinations).slice(0, MAX_DESTINATIONS).join(`.`);
+  destination = destination.length ? destination + `.` : ``;
+  return destination;
 };
 
 const generatePhotos = () => {
-  return shuffleArray(PHOTO_URLS).slice(0, getRandomInteger(0, PHOTO_URLS.length - 1));
-};
-
-const generateOffers = () => {
-  return OFFER.slice(0, getRandomInteger(0, OFFER.length - 1));
+  return shuffleArray(PHOTO_URLS).slice(0, getRandomInteger(0, PHOTO_URLS.length));
 };
 
 const generateTime = () => {
@@ -73,15 +79,18 @@ const generateDateRange = () => {
 };
 
 export const generateEvent = () => {
+  const name = generateType();
   return {
+    type: {
+      name,
+      offers: generateOffers(name),
+    },
     dateRange: generateDateRange(),
-    type: generateType(),
-    city: generateCity(),
-    price: generatePrice(),
-    offers: generateOffers(),
-    destination: {
-      description: generateDescription(),
+    city: {
+      name: generateCity(),
+      destination: generateDescription(),
       photos: generatePhotos(),
-    }
+    },
+    price: generatePrice()
   };
 };

@@ -1,10 +1,10 @@
-import {getEventCities, getEventDates, getTotalPrice} from '../utils.js';
+import {getEventsCitiesTitles, getEventsDates, getEventsTotalPrice} from '../utils.js';
 
 export const createInfoTemplate = (events) => {
 
-  const cities = getEventCities(events);
-  const dates = getEventDates(events);
-  const total = getTotalPrice(events);
+  const cities = getEventsCitiesTitles(events);
+  const dates = getEventsDates(events);
+  const total = getEventsTotalPrice(events);
 
   return (
     `<section class="trip-main__trip-info  trip-info">

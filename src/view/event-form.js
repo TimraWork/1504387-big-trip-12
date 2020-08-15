@@ -1,8 +1,9 @@
-import {formatType, formatDateTime} from '../utils.js';
+import {formatEventType, formatDateTime} from '../utils.js';
 
-const createOfferItemTemplate = (name, label, price) => {
+const createOfferItemTemplate = ({name, isChecked, label, price}) => {
+  const checked = isChecked ? `checked` : ``;
   return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox  visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}">
+            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${checked}>
             <label class="event__offer-label" for="event-offer-${name}-1">
               <span class="event__offer-title">${label}</span>
               &plus;
@@ -17,11 +18,9 @@ const createOffersTemplate = (offers) => {
       <section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
-
         ${offers
-          .map((offer)=> createOfferItemTemplate(offer.name, offer.label, offer.price))
+          .map((offer)=> createOfferItemTemplate(offer))
           .join(``)}
-
         </div>
       </section>`;
   } else {
@@ -33,26 +32,24 @@ const createPhotosTemplate = (photos) => {
   return `
   <div class="event__photos-container">
     <div class="event__photos-tape">
-
       ${photos
-      .map((photo)=> {
-        return `<img class="event__photo" src="${photo}" alt="Event photo">`;
-      })
-      .join(``)}
-
+          .map((photo)=> {
+            return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+          })
+          .join(``)}
     </div>
   </div>`;
 };
 
-export const createEventFormTemplate = (event) => {
+export const createEventFormTemplate = ({type, city, price, dateRange}) => {
+  const {name: eventType, offers} = type;
+  const {name: evenCity, photos, destination} = city;
 
-  const {type, city, destination, price, offers, dateRange} = event;
-
-  const typeWithLabel = formatType(type);
+  const typeWithLabel = formatEventType(type.name);
   const startDateTime = formatDateTime(dateRange[0]);
   const endDateTime = formatDateTime(dateRange[1]);
 
-  const photosTemplate = createPhotosTemplate(destination.photos);
+  const photosTemplate = createPhotosTemplate(photos);
   const offersTemplate = createOffersTemplate(offers);
 
   return (
@@ -61,7 +58,7 @@ export const createEventFormTemplate = (event) => {
         <div class="event__type-wrapper">
           <label class="event__type  event__type-btn" for="event-type-toggle-1">
             <span class="visually-hidden">Choose event type</span>
-            <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
+            <img class="event__type-icon" width="17" height="17" src="img/icons/${eventType}.png" alt="Event type icon">
           </label>
           <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
@@ -130,7 +127,7 @@ export const createEventFormTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${typeWithLabel}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${city}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${evenCity}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -168,7 +165,7 @@ export const createEventFormTemplate = (event) => {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination.description}</p>
+          <p class="event__destination-description">${destination}</p>
 
           ${photosTemplate}
 
