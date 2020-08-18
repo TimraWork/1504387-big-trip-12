@@ -1,7 +1,29 @@
-import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER} from './const.js';
+import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER, RenderPosition} from './const.js';
 
 export const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
+};
+
+export const renderElement = (container, element, place) => {
+  switch (place) {
+    case RenderPosition.AFTER_BEGIN:
+      container.prepend(element);
+      break;
+    case RenderPosition.BEFORE_END:
+      container.append(element);
+      break;
+    case RenderPosition.AFTER_END:
+      container.after(element);
+      break;
+    default:
+      container.appendChild(element);
+  }
+};
+
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+  return newElement.firstChild;
 };
 
 export const getRandomInteger = (min, max, num = 1) => {

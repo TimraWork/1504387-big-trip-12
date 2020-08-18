@@ -1,9 +1,10 @@
-import {EVENT_COUNT} from './const.js';
-import {render} from './utils.js';
+import {EVENT_COUNT, RenderPosition} from './const.js';
+import {render, renderElement} from './utils.js';
 import {generateEvent} from './mock/event.js';
 
+import MenuView from "./view/menu.js";
+
 import {createInfoTemplate} from './view/info.js';
-import {createMenuTemplate} from './view/menu.js';
 import {createFilterTemplate} from './view/filter.js';
 import {createSortTemplate} from './view/sort.js';
 import {createEventFormTemplate} from './view/event-form.js';
@@ -22,7 +23,8 @@ const events = new Array(EVENT_COUNT)
   });
 
 render(infoContainer, createInfoTemplate(events), `afterbegin`);
-render(titleMenu, createMenuTemplate(), `afterend`);
+// render(titleMenu, createMenuTemplate(), `afterend`);
+renderElement(titleMenu, new MenuView().getElement(), RenderPosition.AFTER_END);
 render(titleFilter, createFilterTemplate(), `afterend`);
 render(eventContainer, createSortTemplate(), `beforeend`);
 render(eventContainer, createEventFormTemplate(events[0]), `beforeend`);
