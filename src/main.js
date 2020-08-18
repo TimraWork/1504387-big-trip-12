@@ -4,10 +4,9 @@ import {generateEvent} from './mock/event.js';
 
 import MenuView from "./view/menu.js";
 import FilterView from "./view/filter.js";
+import SortView from "./view/filter.js";
 
 import {createInfoTemplate} from './view/info.js';
-import {createFilterTemplate} from './view/filter.js';
-import {createSortTemplate} from './view/sort.js';
 import {createEventFormTemplate} from './view/event-form.js';
 import {createEventsHistoryTemplate} from './view/events-history.js';
 
@@ -28,6 +27,8 @@ render(infoContainer, createInfoTemplate(events), `afterbegin`);
 renderElement(titleMenu, new MenuView().getElement(), RenderPosition.AFTER_END);
 // render(titleFilter, createFilterTemplate(), `afterend`);
 renderElement(titleFilter, new FilterView().getElement(), RenderPosition.AFTER_END);
-render(eventContainer, createSortTemplate(), `beforeend`);
+// render(eventContainer, createSortTemplate(), `beforeend`);
+renderElement(titleFilter, new SortView().getElement(), RenderPosition.BEFORE_END);
+
 render(eventContainer, createEventFormTemplate(events[0]), `beforeend`);
 render(eventContainer, createEventsHistoryTemplate(events), `beforeend`);
