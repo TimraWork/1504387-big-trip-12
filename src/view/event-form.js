@@ -1,4 +1,4 @@
-import {formatEventType, formatDateTime} from '../utils.js';
+import {createElement, formatEventType, formatDateTime} from '../utils.js';
 
 const createOfferItemTemplate = ({name, isChecked, label, price}) => {
   const checked = isChecked ? `checked` : ``;
@@ -41,7 +41,9 @@ const createPhotosTemplate = (photos) => {
   </div>`;
 };
 
-export const createEventFormTemplate = ({type, city, price, dateRange}) => {
+const createEventFormTemplate = (event) => {
+  console.log(`createEventFormTemplate -> event`, event);
+  const {type, city, price, dateRange} = event;
   const {name: eventType, offers} = type;
   const {name: evenCity, photos, destination} = city;
 
@@ -174,3 +176,26 @@ export const createEventFormTemplate = ({type, city, price, dateRange}) => {
     </form>`
   );
 };
+
+export default class EventForm {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventFormTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

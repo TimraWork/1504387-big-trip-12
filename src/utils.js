@@ -1,10 +1,6 @@
 import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER, RenderPosition} from './const.js';
 
-export const render = (container, template, place) => {
-  container.insertAdjacentHTML(place, template);
-};
-
-export const renderElement = (container, element, place) => {
+export const render = (container, element, place) => {
   switch (place) {
     case RenderPosition.AFTER_BEGIN:
       container.prepend(element);
