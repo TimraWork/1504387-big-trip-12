@@ -56,11 +56,10 @@ const generatePhotos = () => {
 };
 
 const generateTime = () => {
-  const time = {};
-  for (let [key, value] of Object.entries(MaxTime)) {
-    time[key] = getRandomInteger(0, value, GAP);
-  }
-  return time;
+  return Object.entries(MaxTime).reduce((accumulator, current)=>{
+    accumulator[current[0]] = getRandomInteger(0, current[1], GAP);
+    return accumulator;
+  }, {});
 };
 
 const generateDate = () => {

@@ -20,7 +20,7 @@ export const shuffleArray = (array) => {
 };
 
 const capitalizeFirstLetter = (string) => {
-  return string.charAt(0).toUpperCase() + string.slice(1);
+  return string[0].toUpperCase() + string.slice(1);
 };
 
 export const formatEventType = (type) => {
@@ -49,39 +49,25 @@ export const formatMonthDate = (date) => {
 
 export const getTripDays = (events) => {
   const dates = events.map((day) => formatDate(day.dateRange[0]));
-  const days = [...new Set(dates)];
 
-  return days;
+  return [...new Set(dates)];
 };
 
 export const filterEventsByDays = (events, day) => {
   return events.filter((event)=>formatDate(event.dateRange[0]) === day);
 };
 
-export const getEventsTotalPrice = (events) => {
-  let totalSum = 0;
-
-  for (const event of events) {
-    const sumOffers = event.type.offers.map((it)=>it.price).reduce((a, b) => (a + b), 0);
-    totalSum += (sumOffers + event.price);
-  }
-
-  return totalSum;
-};
-
 export const getEventsCitiesTitles = (events) => {
-  let cities = events.map((item) => item.city.name);
+  const cities = events.map((event) => event.city.name);
 
   const titlesWithDividers = `${cities.join(TEXT_DIVIDER)}`;
   const titlesWithEllipsis = `${cities[0]} ${TEXT_DIVIDER} ... ${TEXT_DIVIDER} ${cities[cities.length - 1]}`;
 
-  const citiesTitles = cities.length > MAX_INFO_CITIES ? titlesWithEllipsis : titlesWithDividers;
-
-  return citiesTitles;
+  return cities.length > MAX_INFO_CITIES ? titlesWithEllipsis : titlesWithDividers;
 };
 
 export const getEventsDates = (events) => {
-  let dates = events.map((item) => item.dateRange);
+  let dates = events.map((event) => event.dateRange);
   const startDate = dates[0][0];
   const endDate = dates[dates.length - 1][1];
 
@@ -107,4 +93,17 @@ export const getDuration = (dateRange) => {
   const diffMinutes = getDiff(interval.getUTCMinutes(), `M`);
 
   return `${diffDay} ${diffHour} ${diffMinutes}`;
+};
+
+export const getEventsTotalPrice = (events) => {
+  const totalSum = events.reduce((accumulator, current)=>{
+    const sumOffers = current.type.offers
+      .filter((offer)=>offer.isChecked)
+      .map((offer)=>offer.price)
+      .reduce((acc, curr) => (acc + curr), 0);
+
+    return accumulator + (current.price + sumOffers);
+  }, 0);
+
+  return totalSum;
 };

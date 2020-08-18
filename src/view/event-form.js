@@ -23,9 +23,9 @@ const createOffersTemplate = (offers) => {
           .join(``)}
         </div>
       </section>`;
-  } else {
-    return ``;
   }
+
+  return ``;
 };
 
 const createPhotosTemplate = (photos) => {

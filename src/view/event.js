@@ -19,9 +19,9 @@ const createOffersTemplate = (offers) => {
           .map((offer)=> createOfferTemplate(offer.label, offer.price))
           .join(``)}
     </ul>`;
-  } else {
-    return ``;
   }
+
+  return ``;
 };
 
 export const createEventTemplate = ({type, city, dateRange, price}) => {

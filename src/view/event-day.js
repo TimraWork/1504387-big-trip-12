@@ -15,7 +15,7 @@ export const createEventDayTemplate = (events, day, index) => {
                   .join(``)}
               </ul>
             </li>`;
-  } else {
-    return ``;
   }
+
+  return ``;
 };
