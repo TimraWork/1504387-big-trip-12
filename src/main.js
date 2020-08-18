@@ -3,6 +3,7 @@ import {render, renderElement} from './utils.js';
 import {generateEvent} from './mock/event.js';
 
 import MenuView from "./view/menu.js";
+import FilterView from "./view/filter.js";
 
 import {createInfoTemplate} from './view/info.js';
 import {createFilterTemplate} from './view/filter.js';
@@ -25,7 +26,8 @@ const events = new Array(EVENT_COUNT)
 render(infoContainer, createInfoTemplate(events), `afterbegin`);
 // render(titleMenu, createMenuTemplate(), `afterend`);
 renderElement(titleMenu, new MenuView().getElement(), RenderPosition.AFTER_END);
-render(titleFilter, createFilterTemplate(), `afterend`);
+// render(titleFilter, createFilterTemplate(), `afterend`);
+renderElement(titleFilter, new FilterView().getElement(), RenderPosition.AFTER_END);
 render(eventContainer, createSortTemplate(), `beforeend`);
 render(eventContainer, createEventFormTemplate(events[0]), `beforeend`);
 render(eventContainer, createEventsHistoryTemplate(events), `beforeend`);
