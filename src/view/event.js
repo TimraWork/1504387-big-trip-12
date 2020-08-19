@@ -1,5 +1,5 @@
+import {createElement, formatTime, formatDateTime, getDuration, formatEventType} from '../utils.js';
 import {MAX_OFFERS} from '../const.js';
-import {formatTime, formatDateTime, getDuration, formatEventType} from '../utils.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -19,17 +19,17 @@ const createOffersTemplate = (offers) => {
           .map((offer)=> createOfferTemplate(offer.label, offer.price))
           .join(``)}
     </ul>`;
-  } else {
-    return ``;
   }
+
+  return ``;
 };
 
-export const createEventTemplate = ({type, city, dateRange, price}) => {
+const createEventTemplate = ({type, city, dateRange, price}) => {
 
   const {name: eventType, offers} = type;
   const {name: evenCity} = city;
 
-  const typeWithLabel = formatEventType(type.name);
+  const typeWithLabel = formatEventType(eventType);
   const startTime = formatTime(dateRange[0]);
   const endTime = formatTime(dateRange[1]);
   const startDateTime = formatDateTime(dateRange[0]);
@@ -68,3 +68,26 @@ export const createEventTemplate = ({type, city, dateRange, price}) => {
     </li>`
   );
 };
+
+export default class Event {
+  constructor(events) {
+    this._events = events;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._events);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

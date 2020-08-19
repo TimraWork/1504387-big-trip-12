@@ -7,3 +7,11 @@ export const EVENT_TYPE = {
   activities: [`check-in`, `sightseeing`, `restaurant`],
   joinLabels: [`to`, `in`]
 };
+export const RenderPosition = {
+  AFTER_END: `afterend`,
+  AFTER_BEGIN: `afterbegin`,
+  BEFORE_END: `beforeend`,
+};
+export const KeyCode = {
+  ESCAPE: 27
+};

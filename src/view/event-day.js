@@ -1,7 +1,6 @@
-import {formatMonthDate} from '../utils.js';
-import {createEventTemplate} from '../view/event.js';
+import {createElement, formatMonthDate} from '../utils.js';
 
-export const createEventDayTemplate = (events, day, index) => {
+const createEventDayTemplate = (day, index) => {
   if (day.length) {
     const formattedDate = formatMonthDate(new Date(day));
     return `<li class="trip-days__item  day">
@@ -10,12 +9,33 @@ export const createEventDayTemplate = (events, day, index) => {
                 <time class="day__date" datetime="${day}">${formattedDate}</time>
               </div>
               <ul class="trip-events__list" data-day=${day}>
-                ${events
-                  .map((event) => createEventTemplate(event))
-                  .join(``)}
               </ul>
             </li>`;
-  } else {
-    return ``;
   }
+
+  return ``;
 };
+
+export default class EventDay {
+  constructor(day, index) {
+    this._day = day;
+    this._index = index;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventDayTemplate(this._day, this._index);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
