@@ -4,7 +4,7 @@ import {generateEvent} from './mock/event.js';
 
 import MenuView from "./view/menu.js";
 import FilterView from "./view/filter.js";
-import SortView from "./view/filter.js";
+import SortView from "./view/sort.js";
 import InfoView from "./view/info.js";
 import EventsHistoryView from "./view/events-history.js";
 import EventDayView from "./view/event-day.js";
@@ -26,7 +26,7 @@ const events = new Array(EVENT_COUNT)
 render(infoContainer, new InfoView(events).getElement(), RenderPosition.AFTER_BEGIN);
 render(titleMenu, new MenuView().getElement(), RenderPosition.AFTER_END);
 render(titleFilter, new FilterView().getElement(), RenderPosition.AFTER_END);
-render(titleFilter, new SortView().getElement(), RenderPosition.BEFORE_END);
+render(eventsContainer, new SortView().getElement(), RenderPosition.AFTER_BEGIN);
 render(eventsContainer, new EventsHistoryView(events).getElement(), RenderPosition.BEFORE_END);
 
 const renderEvent = (eventContainer, event) => {
@@ -54,8 +54,7 @@ const renderEvent = (eventContainer, event) => {
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditComponent.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, () => {
     replaceFormToCard();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
