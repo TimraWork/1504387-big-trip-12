@@ -1,4 +1,4 @@
-import {EVENT_COUNT, RenderPosition} from './const.js';
+import {EVENT_COUNT, RenderPosition, KeyCode} from './const.js';
 import {render, getTripDays, filterEventsByDays} from './utils.js';
 import {generateEvent} from './mock/event.js';
 
@@ -27,41 +27,52 @@ render(infoContainer, new InfoView(events).getElement(), RenderPosition.AFTER_BE
 render(titleMenu, new MenuView().getElement(), RenderPosition.AFTER_END);
 render(titleFilter, new FilterView().getElement(), RenderPosition.AFTER_END);
 render(titleFilter, new SortView().getElement(), RenderPosition.BEFORE_END);
-render(eventsContainer, new EventEditView(events[0]).getElement(), RenderPosition.BEFORE_END);
 render(eventsContainer, new EventsHistoryView(events).getElement(), RenderPosition.BEFORE_END);
 
-const tripDaysContainer = eventsContainer.querySelector(`.trip-days`);
-getTripDays(events).forEach((day, index) => {
-  const filteredEventsByDay = filterEventsByDays(events, day);
-  return render(tripDaysContainer, new EventDayView(filteredEventsByDay, day, index + 1).getElement(), RenderPosition.BEFORE_END);
-});
+const renderEvent = (eventContainer, event) => {
+  const eventComponent = new EventView(event);
+  const eventEditComponent = new EventEditView(event);
 
-const eventContainers = eventsContainer.querySelectorAll(`.trip-events__list`);
-eventContainers.forEach((event) => {
-  console.log(event.dataset.day);
-});
-// console.log(`eventContainer`, eventContainer);
-// render(eventContainer, new EventView(task), RenderPosition.BEFOREEND);
-// const renderEvent = (taskListElement, task) => {
-//   const eventComponent = new EventView(task);
-//   const eventEditComponent = new EventEditView(task);
+  const replaceCardToForm = () => {
+    eventContainer.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  };
 
-//   const replaceCardToForm = () => {
-//     taskListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
-//   };
+  const replaceFormToCard = () => {
+    eventContainer.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
 
-//   const replaceFormToCard = () => {
-//     taskListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
-//   };
+  const onEscKeyDown = (evt) => {
+    if (evt.keyCode === KeyCode.ESCAPE) {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    }
+  };
 
-//   eventComponent.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, () => {
-//     replaceCardToForm();
-//   });
+  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+    replaceCardToForm();
+    document.addEventListener(`keydown`, onEscKeyDown);
+  });
 
-//   eventEditComponent.getElement().querySelector(`form`).addEventListener(`submit`, (evt) => {
-//     evt.preventDefault();
-//     replaceFormToCard();
-//   });
+  eventEditComponent.getElement().addEventListener(`submit`, (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+    document.removeEventListener(`keydown`, onEscKeyDown);
+  });
 
-//   render(taskListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
-// };
+  render(eventContainer, eventComponent.getElement(), RenderPosition.BEFORE_END);
+};
+
+const renderEventDays = () => {
+  const tripDaysContainer = eventsContainer.querySelector(`.trip-days`);
+
+  getTripDays(events).forEach((day, index) => {
+    const filteredEventsByDay = filterEventsByDays(events, day);
+    render(tripDaysContainer, new EventDayView(day, index + 1).getElement(), RenderPosition.BEFORE_END);
+
+    const eventContainer = eventsContainer.querySelector(`.trip-events__list[data-day="${day}"]`);
+    filteredEventsByDay.forEach((event)=>renderEvent(eventContainer, event));
+  });
+};
+
+renderEventDays();

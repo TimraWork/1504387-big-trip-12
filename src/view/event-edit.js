@@ -176,7 +176,7 @@ const createEventFormTemplate = (event) => {
   );
 };
 
-export default class EventForm {
+export default class EventEdit {
   constructor(event) {
     this._event = event;
     this._element = null;

@@ -29,7 +29,7 @@ const createEventTemplate = ({type, city, dateRange, price}) => {
   const {name: eventType, offers} = type;
   const {name: evenCity} = city;
 
-  const typeWithLabel = formatEventType(type.name);
+  const typeWithLabel = formatEventType(eventType);
   const startTime = formatTime(dateRange[0]);
   const endTime = formatTime(dateRange[1]);
   const startDateTime = formatDateTime(dateRange[0]);
