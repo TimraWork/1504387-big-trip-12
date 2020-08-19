@@ -13,6 +13,7 @@ export const render = (container, element, place) => {
       break;
     default:
       container.appendChild(element);
+      break;
   }
 };
 

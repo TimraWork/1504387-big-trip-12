@@ -42,7 +42,6 @@ const createPhotosTemplate = (photos) => {
 };
 
 const createEventFormTemplate = (event) => {
-  console.log(`createEventFormTemplate -> event`, event);
   const {type, city, price, dateRange} = event;
   const {name: eventType, offers} = type;
   const {name: evenCity, photos, destination} = city;
