@@ -1,19 +1,16 @@
 import {createElement} from '../utils.js';
 
-const createEventsHistoryTemplate = () => {
-  return (
-    `<ul class="trip-days"></ul>`
-  );
+const createEventsCreateTemplate = () => {
+  return (`<p class="trip-events__msg">Click New Event to create your first point</p>`);
 };
 
 export default class EventsHistory {
-  constructor(events) {
-    this._events = events;
+  constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createEventsHistoryTemplate(this._events);
+    return createEventsCreateTemplate();
   }
 
   getElement() {
