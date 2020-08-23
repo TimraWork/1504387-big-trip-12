@@ -1,5 +1,6 @@
-import {createElement, formatTime, formatDateTime, getDuration, formatEventType} from '../utils.js';
+import {formatTime, formatDateTime, getDuration, formatEventType} from '../utils.js';
 import {MAX_OFFERS} from '../const.js';
+import Abstract from './abstract.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -69,25 +70,13 @@ const createEventTemplate = ({type, city, dateRange, price}) => {
   );
 };
 
-export default class Event {
+export default class Event extends Abstract {
   constructor(events) {
+    super();
     this._events = events;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventTemplate(this._events);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

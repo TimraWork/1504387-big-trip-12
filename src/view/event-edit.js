@@ -1,4 +1,5 @@
-import {createElement, formatEventType, formatDateTime} from '../utils.js';
+import {formatEventType, formatDateTime} from '../utils.js';
+import Abstract from './abstract.js';
 
 const createOfferItemTemplate = ({name, isChecked, label, price}) => {
   const checked = isChecked ? `checked` : ``;
@@ -176,25 +177,13 @@ const createEventFormTemplate = (event) => {
   );
 };
 
-export default class EventEdit {
+export default class EventEdit extends Abstract {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventFormTemplate(this._event);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
