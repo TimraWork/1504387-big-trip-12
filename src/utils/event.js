@@ -1,5 +1,9 @@
 import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER} from '../const.js';
-import {formatMonthDate, formatDate, capitalizeFirstLetter} from './common.js';
+import {formatMonthDate, formatDate} from './common.js';
+
+export const capitalizeFirstLetter = (string) => {
+  return string[0].toUpperCase() + string.slice(1);
+};
 
 export const formatEventType = (type) => {
   const labels = EVENT_TYPE.joinLabels;
@@ -41,6 +45,22 @@ export const getEventsDates = (events) => {
 
   return dates;
 };
+
+const getDurationDiff = (countTime, label) => {
+  return countTime ? countTime + label : ``;
+};
+
+export const getEventDuration = (dateRange) => {
+  const [d1, d2] = dateRange;
+  const interval = new Date(d2 - d1);
+
+  const diffDay = getDurationDiff(interval.getUTCDate() - 1, `D`);
+  const diffHour = getDurationDiff(interval.getUTCHours(), `H`);
+  const diffMinutes = getDurationDiff(interval.getUTCMinutes(), `M`);
+
+  return `${diffDay} ${diffHour} ${diffMinutes}`;
+};
+
 
 export const getEventsTotalPrice = (events) => {
   const totalSum = events.reduce((accumulator, current)=>{

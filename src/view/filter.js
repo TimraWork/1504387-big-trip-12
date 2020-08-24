@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createFilterTemplate = () => {
   return (
@@ -23,7 +23,7 @@ const createFilterTemplate = () => {
   );
 };
 
-export default class Filter extends Abstract {
+export default class Filter extends AbstractView {
   getTemplate() {
     return createFilterTemplate();
   }

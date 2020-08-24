@@ -1,6 +1,21 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
+import {EVENT_TYPE} from '../const.js';
 import {formatDateTime} from '../utils/common.js';
 import {formatEventType} from '../utils/event.js';
+
+const BLANK_EVENT = {
+  type: {
+    name: EVENT_TYPE.movements[0],
+    offers: [],
+  },
+  dateRange: [new Date(), new Date()],
+  city: {
+    name: ``,
+    destination: ``,
+    photos: [],
+  },
+  price: 0
+};
 
 const createOfferItemTemplate = ({name, isChecked, label, price}) => {
   const checked = isChecked ? `checked` : ``;
@@ -31,28 +46,43 @@ const createOffersTemplate = (offers) => {
 };
 
 const createPhotosTemplate = (photos) => {
+  // console.log(`PHOTOS`, photos);
   return `
-  <div class="event__photos-container">
-    <div class="event__photos-tape">
-      ${photos
-          .map((photo)=> {
-            return `<img class="event__photo" src="${photo}" alt="Event photo">`;
-          })
-          .join(``)}
-    </div>
-  </div>`;
+    <div class="event__photos-container">
+      <div class="event__photos-tape">
+        ${photos
+            .map((photo)=> {
+              return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+            })
+            .join(``)}
+      </div>
+    </div>`;
+};
+
+const createDestinationTemplate = ({name, photos, destination}) => {
+  const photosTemplate = createPhotosTemplate(photos);
+  if (name.length) {
+    return `
+    <section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${destination}</p>
+      ${photosTemplate}
+    </section>`;
+  }
+
+  return ``;
 };
 
 const createEventFormTemplate = (event) => {
   const {type, city, price, dateRange} = event;
   const {name: eventType, offers} = type;
-  const {name: evenCity, photos, destination} = city;
+  const {name: eventCity} = city;
 
   const typeWithLabel = formatEventType(type.name);
   const startDateTime = formatDateTime(dateRange[0]);
   const endDateTime = formatDateTime(dateRange[1]);
 
-  const photosTemplate = createPhotosTemplate(photos);
+  const destinationTemplate = createDestinationTemplate(city);
   const offersTemplate = createOffersTemplate(offers);
 
   return (
@@ -130,7 +160,7 @@ const createEventFormTemplate = (event) => {
           <label class="event__label  event__type-output" for="event-destination-1">
             ${typeWithLabel}
           </label>
-          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${evenCity}" list="destination-list-1">
+          <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventCity}" list="destination-list-1">
           <datalist id="destination-list-1">
             <option value="Amsterdam"></option>
             <option value="Geneva"></option>
@@ -162,29 +192,47 @@ const createEventFormTemplate = (event) => {
         <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
         <button class="event__reset-btn" type="reset">Cancel</button>
       </header>
-      <section class="event__details">
 
+      ${ offersTemplate || destinationTemplate ?
+      `<section class="event__details">
         ${offersTemplate}
+        ${destinationTemplate}
+        </section>` :
+      ``}
 
-        <section class="event__section  event__section--destination">
-          <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">${destination}</p>
-
-          ${photosTemplate}
-
-        </section>
-      </section>
     </form>`
   );
 };
 
-export default class EventEdit extends Abstract {
+export default class EventEdit extends AbstractView {
   constructor(event) {
     super();
-    this._event = event;
+    this._event = event || BLANK_EVENT;
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formResetHandler = this._formResetHandler.bind(this);
   }
 
   getTemplate() {
     return createEventFormTemplate(this._event);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  _formResetHandler(evt) {
+    evt.preventDefault();
+    this._callback.formReset();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().addEventListener(`submit`, this._formSubmitHandler);
+  }
+
+  setFormResetHandler(callback) {
+    this._callback.formReset = callback;
+    this.getElement().addEventListener(`reset`, this._formResetHandler);
   }
 }

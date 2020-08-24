@@ -34,12 +34,11 @@ render(titleFilter, new FilterView(), RenderPosition.AFTER_END);
 const addEventActions = (eventContainer, eventComponent, eventEditComponent) => {
 
   const replaceCardToForm = () => {
-    eventContainer.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
-    replace(eventEditComponent, eventComponent);
+    replace(eventContainer, eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
-    eventContainer.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+    replace(eventContainer, eventComponent, eventEditComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -50,18 +49,17 @@ const addEventActions = (eventContainer, eventComponent, eventEditComponent) => 
     }
   };
 
-  eventComponent.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, () => {
+  eventComponent.setEditClickHandler(() => {
     replaceCardToForm();
     document.addEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().addEventListener(`submit`, (evt) => {
-    evt.preventDefault();
+  eventEditComponent.setFormSubmitHandler(() => {
     replaceFormToCard();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });
 
-  eventEditComponent.getElement().addEventListener(`reset`, () => {
+  eventEditComponent.setFormResetHandler(() => {
     replaceFormToCard();
     document.removeEventListener(`keydown`, onEscKeyDown);
   });

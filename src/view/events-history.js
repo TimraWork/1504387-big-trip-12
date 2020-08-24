@@ -1,4 +1,4 @@
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createEventsHistoryTemplate = () => {
   return (
@@ -6,7 +6,7 @@ const createEventsHistoryTemplate = () => {
   );
 };
 
-export default class EventsHistory extends Abstract {
+export default class EventsHistory extends AbstractView {
   constructor(events) {
     super();
     this._events = events;

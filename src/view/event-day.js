@@ -1,5 +1,5 @@
 import {formatMonthDate} from '../utils/common.js';
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createEventDayTemplate = (day, index) => {
   if (day.length) {
@@ -17,7 +17,7 @@ const createEventDayTemplate = (day, index) => {
   return ``;
 };
 
-export default class EventDay extends Abstract {
+export default class EventDay extends AbstractView {
   constructor(day, index) {
     super();
     this._day = day;

@@ -1,8 +1,8 @@
 import {MAX_OFFERS} from '../const.js';
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
-import {formatTime, formatDateTime, getDuration} from '../utils/common.js';
-import {formatEventType} from '../utils/event.js';
+import {formatTime, formatDateTime} from '../utils/common.js';
+import {formatEventType, getEventDuration} from '../utils/event.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -37,7 +37,7 @@ const createEventTemplate = ({type, city, dateRange, price}) => {
   const endTime = formatTime(dateRange[1]);
   const startDateTime = formatDateTime(dateRange[0]);
   const endDateTime = formatDateTime(dateRange[1]);
-  const duration = getDuration(dateRange);
+  const duration = getEventDuration(dateRange);
 
   const offersTemplate = createOffersTemplate(offers);
 
@@ -72,13 +72,24 @@ const createEventTemplate = ({type, city, dateRange, price}) => {
   );
 };
 
-export default class Event extends Abstract {
+export default class Event extends AbstractView {
   constructor(events) {
     super();
     this._events = events;
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventTemplate(this._events);
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._editClickHandler);
   }
 }

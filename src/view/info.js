@@ -1,5 +1,5 @@
 import {getEventsCitiesTitles, getEventsDates, getEventsTotalPrice} from '../utils/event.js';
-import Abstract from './abstract.js';
+import AbstractView from './abstract.js';
 
 const createCitiesDatesTemplate = (events) => {
   if (events.length) {
@@ -30,7 +30,7 @@ const createInfoTemplate = (events) => {
   );
 };
 
-export default class Info extends Abstract {
+export default class Info extends AbstractView {
   constructor(events) {
     super();
     this._events = events;
