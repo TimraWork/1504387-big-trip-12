@@ -1,4 +1,4 @@
-import {getEventsCitiesTitles, getEventsDates, getEventsTotalPrice} from '../utils.js';
+import {getEventsCitiesTitles, getEventsDates, getEventsTotalPrice} from '../utils/event.js';
 import Abstract from './abstract.js';
 
 const createCitiesDatesTemplate = (events) => {

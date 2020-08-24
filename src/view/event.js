@@ -1,6 +1,8 @@
-import {formatTime, formatDateTime, getDuration, formatEventType} from '../utils.js';
 import {MAX_OFFERS} from '../const.js';
 import Abstract from './abstract.js';
+
+import {formatTime, formatDateTime, getDuration} from '../utils/common.js';
+import {formatEventType} from '../utils/event.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">

@@ -1,4 +1,4 @@
-import {formatMonthDate} from '../utils.js';
+import {formatMonthDate} from '../utils/common.js';
 import Abstract from './abstract.js';
 
 const createEventDayTemplate = (day, index) => {

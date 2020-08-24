@@ -1,5 +1,8 @@
 import {EVENT_COUNT, RenderPosition, KeyCode} from './const.js';
-import {render, getTripDays, filterEventsByDays} from './utils.js';
+
+import {getTripDays, filterEventsByDays} from './utils/event.js';
+import {render, replace} from './utils/render.js';
+
 import {generateEvent} from './mock/event.js';
 
 import MenuView from "./view/menu.js";
@@ -24,14 +27,15 @@ const events = new Array(EVENT_COUNT)
     return a.dateRange[0].getTime() - b.dateRange[0].getTime();
   });
 
-render(infoContainer, new InfoView(events).getElement(), RenderPosition.AFTER_BEGIN);
-render(titleMenu, new MenuView().getElement(), RenderPosition.AFTER_END);
-render(titleFilter, new FilterView().getElement(), RenderPosition.AFTER_END);
+render(infoContainer, new InfoView(events), RenderPosition.AFTER_BEGIN);
+render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
+render(titleFilter, new FilterView(), RenderPosition.AFTER_END);
 
 const addEventActions = (eventContainer, eventComponent, eventEditComponent) => {
 
   const replaceCardToForm = () => {
     eventContainer.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+    replace(eventEditComponent, eventComponent);
   };
 
   const replaceFormToCard = () => {
@@ -87,8 +91,8 @@ const createEventsList = function () {
 };
 
 if (events.length) {
-  render(eventsContainer, new SortView().getElement(), RenderPosition.AFTER_BEGIN);
+  render(eventsContainer, new SortView(), RenderPosition.AFTER_BEGIN);
   render(eventsContainer, createEventsList(), RenderPosition.BEFORE_END);
 } else {
-  render(eventsContainer, new NoEventView().getElement(), RenderPosition.AFTER_END);
+  render(eventsContainer, new NoEventView(), RenderPosition.AFTER_END);
 }

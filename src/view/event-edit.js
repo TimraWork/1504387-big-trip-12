@@ -1,5 +1,6 @@
-import {formatEventType, formatDateTime} from '../utils.js';
 import Abstract from './abstract.js';
+import {formatDateTime} from '../utils/common.js';
+import {formatEventType} from '../utils/event.js';
 
 const createOfferItemTemplate = ({name, isChecked, label, price}) => {
   const checked = isChecked ? `checked` : ``;
