@@ -4,6 +4,7 @@ import {getTripDays, filterEventsByDays} from './utils/event.js';
 import {render, replace} from './utils/render.js';
 
 import {generateEvent} from './mock/event.js';
+import TripPresenter from "./presenter/trip.js";
 
 import MenuView from "./view/menu.js";
 import FilterView from "./view/filter.js";
@@ -94,3 +95,5 @@ if (events.length) {
 } else {
   render(eventsContainer, new NoEventView(), RenderPosition.AFTER_END);
 }
+
+TripPresenter.init(events);
