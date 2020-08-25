@@ -4,9 +4,10 @@ import EventsHistoryView from "../view/events-history.js";
 import EventDayView from "../view/event-day.js";
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
+
 import {getTripDays, filterEventsByDays} from '../utils/event.js';
 import {render, replace} from '../utils/render.js';
-import {RenderPosition} from '../const.js';
+import {RenderPosition, KeyCode} from '../const.js';
 
 export default class Trip {
   constructor(tripContainer) {
@@ -26,19 +27,58 @@ export default class Trip {
     render(this._tripContainer, this._sortComponent, RenderPosition.AFTER_BEGIN);
   }
 
+  _addEventHandlers(eventContainer, eventComponent, eventEditComponent) {
+    const replaceCardToForm = () => {
+      replace(eventContainer, eventEditComponent, eventComponent);
+    };
+
+    const replaceFormToCard = () => {
+      replace(eventContainer, eventComponent, eventEditComponent);
+    };
+
+    const onEscKeyDown = (evt) => {
+      if (evt.keyCode === KeyCode.ESCAPE) {
+        evt.preventDefault();
+        replaceFormToCard();
+        document.removeEventListener(`keydown`, onEscKeyDown);
+      }
+    };
+
+    eventComponent.setEditClickHandler(() => {
+      replaceCardToForm();
+      document.addEventListener(`keydown`, onEscKeyDown);
+    });
+
+    eventEditComponent.setFormSubmitHandler(() => {
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+
+    eventEditComponent.setFormResetHandler(() => {
+      replaceFormToCard();
+      document.removeEventListener(`keydown`, onEscKeyDown);
+    });
+  }
+
+  _createEventNode(event, dayNode) {
+    const eventComponent = new EventView(event);
+    const eventEditComponent = new EventEditView(event);
+
+    const eventNode = dayNode.appendChild(eventComponent.getElement());
+
+    this._addEventHandlers(dayNode, eventComponent, eventEditComponent);
+
+    return eventNode;
+  }
+
   _createEventsByDayNode() {
     const eventsNode = this._createDaysNode();
 
-    eventsNode.querySelectorAll(`.trip-events__list`).forEach((day) => {
-      const filteredEventsByDay = filterEventsByDays(this._tripEvents, day.dataset.day);
+    eventsNode.querySelectorAll(`.trip-events__list`).forEach((dayNode) => {
+      const filteredEventsByDay = filterEventsByDays(this._tripEvents, dayNode.dataset.day);
 
       filteredEventsByDay.forEach((event) => {
-        const eventComponent = new EventView(event);
-        const eventEditComponent = new EventEditView(event);
-
-        day.appendChild(eventComponent.getElement());
-
-        // addEventActions(eventContainer, eventComponent, eventEditComponent);
+        this._createEventNode(event, dayNode);
       });
     });
 
