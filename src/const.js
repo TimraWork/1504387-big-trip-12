@@ -1,4 +1,4 @@
-export const EVENT_COUNT = 20;
+export const EVENT_COUNT = 4;
 export const MAX_OFFERS = 3;
 export const MAX_INFO_CITIES = 3;
 export const TEXT_DIVIDER = ` &mdash; `;

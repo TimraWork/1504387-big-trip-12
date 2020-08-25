@@ -2,8 +2,8 @@ import SortView from "../view/sort.js";
 import NoEventView from "../view/no-event.js";
 import EventsHistoryView from "../view/events-history.js";
 import EventDayView from "../view/event-day.js";
-// import EventView from "../view/event.js";
-// import EventEditView from "../view/event-edit.js";
+import EventView from "../view/event.js";
+import EventEditView from "../view/event-edit.js";
 import {getTripDays, filterEventsByDays} from '../utils/event.js';
 import {render, replace} from '../utils/render.js';
 import {RenderPosition} from '../const.js';
@@ -23,50 +23,40 @@ export default class Trip {
   }
 
   _renderSort() {
-    render(this._tripContainer, this._infoComponent, RenderPosition.AFTER_BEGIN);
+    render(this._tripContainer, this._sortComponent, RenderPosition.AFTER_BEGIN);
   }
 
-  _renderEvent() {
-    // Метод, куда уйдёт логика созданию и рендерингу компонетов задачи,
-    // текущая функция renderTask в main.js
-  }
+  _createEventsByDayNode() {
+    const eventsNode = this._createDaysNode();
 
-  // const createEventsList = function () {
-  //   const eventsList = new EventsHistoryView(events).getElement();
+    eventsNode.querySelectorAll(`.trip-events__list`).forEach((day) => {
+      const filteredEventsByDay = filterEventsByDays(this._tripEvents, day.dataset.day);
 
-  //   getTripDays(events).forEach((day, index) => {
+      filteredEventsByDay.forEach((event) => {
+        const eventComponent = new EventView(event);
+        const eventEditComponent = new EventEditView(event);
 
-  //     eventsList.appendChild(new EventDayView(day, index + 1).getElement());
+        day.appendChild(eventComponent.getElement());
 
-  //     const eventContainer = eventsList.querySelector(`.trip-events__list[data-day="${day}"]`);
-  //     const filteredEventsByDay = filterEventsByDays(events, day);
-
-  //     filteredEventsByDay.forEach((event) =>{
-  //       const eventComponent = new EventView(event);
-  //       const eventEditComponent = new EventEditView(event);
-
-  //       eventContainer.appendChild(eventComponent.getElement());
-
-  //       addEventActions(eventContainer, eventComponent, eventEditComponent);
-  //     });
-  //   });
-
-  //   return eventsList;
-  // };
-
-  _createEventDaysNode() {
-    const tripDaysNode = this._EventsHistoryComponent.getElement();
-    console.log(`getTripDays(this._tripEvents) = `, getTripDays(this._tripEvents));
-    getTripDays(this._tripEvents)
-      .forEach((day, index) => {
-        tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
+        // addEventActions(eventContainer, eventComponent, eventEditComponent);
       });
+    });
+
+    return eventsNode;
+  }
+
+  _createDaysNode() {
+    const tripDaysNode = this._EventsHistoryComponent.getElement();
+
+    getTripDays(this._tripEvents).forEach((day, index) => {
+      tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
+    });
+
     return tripDaysNode;
   }
 
   _renderEvents() {
-    console.log(this._createEventDaysNode());
-    // render(this._tripContainer, createEventsList(), RenderPosition.BEFORE_END);
+    render(this._tripContainer, this._createEventsByDayNode(), RenderPosition.BEFORE_END);
   }
 
   _renderNoEvents() {

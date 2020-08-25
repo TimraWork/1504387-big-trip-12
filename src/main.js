@@ -88,9 +88,9 @@ const createEventsList = function () {
   return eventsList;
 };
 
-if (events.length) {
-  render(eventsContainer, createEventsList(), RenderPosition.BEFORE_END);
-}
+// if (events.length) {
+//   render(eventsContainer, createEventsList(), RenderPosition.BEFORE_END);
+// }
 
 const tripPresenter = new TripPresenter(eventsContainer);
 tripPresenter.init(events);
