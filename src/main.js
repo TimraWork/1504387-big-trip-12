@@ -8,7 +8,6 @@ import TripPresenter from "./presenter/trip.js";
 
 import MenuView from "./view/menu.js";
 import FilterView from "./view/filter.js";
-import SortView from "./view/sort.js";
 import InfoView from "./view/info.js";
 import NoEventView from "./view/no-event.js";
 import EventsHistoryView from "./view/events-history.js";
@@ -90,10 +89,8 @@ const createEventsList = function () {
 };
 
 if (events.length) {
-  render(eventsContainer, new SortView(), RenderPosition.AFTER_BEGIN);
   render(eventsContainer, createEventsList(), RenderPosition.BEFORE_END);
-} else {
-  render(eventsContainer, new NoEventView(), RenderPosition.AFTER_END);
 }
 
-TripPresenter.init(events);
+const tripPresenter = new TripPresenter(eventsContainer);
+tripPresenter.init(events);
