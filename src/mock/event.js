@@ -1,4 +1,4 @@
-import {getRandomInteger, shuffleArray} from '../utils.js';
+import {getRandomInteger, shuffleArray} from '../utils/common.js';
 import {EVENT_TYPE} from '../const.js';
 
 const CITIES = [`Amsterdam`, `Chamonix`, `Geneva`, `San Francisco`, `Miami`, `Mountain View`, `London`];
