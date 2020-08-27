@@ -74,3 +74,11 @@ export const getEventsTotalPrice = (events) => {
 
   return totalSum;
 };
+
+export const sortTime = (eventA, eventB) => {
+  return eventA.dateRange[0].getTime() - eventB.dateRange[0].getTime();
+};
+
+export const sortPrice = (eventA, eventB) => {
+  return eventA.price - eventB.price;
+};
