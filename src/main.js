@@ -15,10 +15,7 @@ const titleFilter = infoContainer.querySelector(`h2:nth-of-type(2)`);
 
 const events = new Array(EVENT_COUNT)
   .fill()
-  .map(generateEvent)
-  .sort((a, b)=> {
-    return a.dateRange[0].getTime() - b.dateRange[0].getTime();
-  });
+  .map(generateEvent);
 
 render(infoContainer, new InfoView(events), RenderPosition.AFTER_BEGIN);
 render(titleMenu, new MenuView(), RenderPosition.AFTER_END);

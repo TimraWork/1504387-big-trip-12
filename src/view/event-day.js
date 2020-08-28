@@ -2,8 +2,9 @@ import {formatMonthDate} from '../utils/common.js';
 import AbstractView from './abstract.js';
 
 const createEventDayTemplate = (day, index) => {
-  if (day.length) {
+  if (day !== undefined) {
     const formattedDate = formatMonthDate(new Date(day));
+
     return `<li class="trip-days__item  day">
               <div class="day__info">
                 <span class="day__counter">${index}</span>
@@ -14,7 +15,11 @@ const createEventDayTemplate = (day, index) => {
             </li>`;
   }
 
-  return ``;
+  return `<li class="trip-days__item  day">
+            <div class="day__info"></div>
+            <ul class="trip-events__list">
+            </ul>
+          </li>`;
 };
 
 export default class EventDay extends AbstractView {

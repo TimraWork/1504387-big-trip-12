@@ -16,7 +16,7 @@ export const formatEventType = (type) => {
 export const getTripDays = (events) => {
   const dates = events.map((day) => formatDate(day.dateRange[0]));
 
-  return [...new Set(dates)];
+  return [...new Set(dates)].sort();
 };
 
 export const filterEventsByDays = (events, day) => {

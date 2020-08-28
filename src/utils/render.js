@@ -33,7 +33,6 @@ export const createElement = (template) => {
   return newElement.firstChild;
 };
 
-
 export const replace = (container, newChild, oldChild) => {
   oldChild = getNodeElement(oldChild);
   newChild = getNodeElement(newChild);

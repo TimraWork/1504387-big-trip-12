@@ -26,23 +26,23 @@ export default class Trip {
     this._tripEvents = tripEvents.slice();
     this._sourcedTripEvents = tripEvents.slice();
 
+    this._tripDays = getTripDays(this._tripEvents);
+
     this._renderTrip();
   }
 
   _sortEvents(sortType) {
-    // 2. Этот исходный массив задач необходим,
-    // потому что для сортировки мы будем мутировать
-    // массив в свойстве _boardTasks
     switch (sortType) {
       case SortType.TIME:
+        this._tripDays = undefined;
         this._tripEvents.sort(sortTime);
         break;
       case SortType.PRICE:
+        this._tripDays = undefined;
         this._tripEvents.sort(sortPrice);
         break;
       default:
-        // 3. А когда пользователь захочет "вернуть всё, как было",
-        // мы просто запишем в _boardTasks исходный массив
+        this._tripDays = getTripDays(this._tripEvents);
         this._tripEvents = this._sourcedTripEvents.slice();
     }
 
@@ -116,7 +116,9 @@ export default class Trip {
     const eventsNode = this._createDaysNode();
 
     eventsNode.querySelectorAll(`.trip-events__list`).forEach((dayNode) => {
-      const filteredEventsByDay = filterEventsByDays(this._tripEvents, dayNode.dataset.day);
+      const filteredEventsByDay = dayNode.dataset.day ?
+        filterEventsByDays(this._tripEvents, dayNode.dataset.day) :
+        this._tripEvents;
 
       filteredEventsByDay.forEach((event) => {
         this._createEventNode(event, dayNode);
@@ -129,9 +131,13 @@ export default class Trip {
   _createDaysNode() {
     const tripDaysNode = this._EventsHistoryComponent.getElement();
 
-    getTripDays(this._tripEvents).forEach((day, index) => {
-      tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
-    });
+    if (this._tripDays) {
+      this._tripDays.forEach((day, index) => {
+        tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
+      });
+    } else {
+      tripDaysNode.appendChild(new EventDayView(this._tripDays).getElement());
+    }
 
     return tripDaysNode;
   }
