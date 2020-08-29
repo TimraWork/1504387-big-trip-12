@@ -16,7 +16,7 @@ export const formatEventType = (type) => {
 export const getTripDays = (events) => {
   const dates = events.map((day) => formatDate(day.dateRange[0]));
 
-  return [...new Set(dates)];
+  return [...new Set(dates)].sort();
 };
 
 export const filterEventsByDays = (events, day) => {
@@ -73,4 +73,12 @@ export const getEventsTotalPrice = (events) => {
   }, 0);
 
   return totalSum;
+};
+
+export const sortTime = (eventA, eventB) => {
+  return eventA.dateRange[0].getTime() - eventB.dateRange[0].getTime();
+};
+
+export const sortPrice = (eventA, eventB) => {
+  return eventA.price - eventB.price;
 };

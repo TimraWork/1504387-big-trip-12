@@ -1,4 +1,4 @@
-export const EVENT_COUNT = 4;
+export const EVENT_COUNT = 20;
 export const MAX_OFFERS = 3;
 export const MAX_INFO_CITIES = 3;
 export const TEXT_DIVIDER = ` &mdash; `;
@@ -11,6 +11,11 @@ export const RenderPosition = {
   AFTER_END: `afterend`,
   AFTER_BEGIN: `afterbegin`,
   BEFORE_END: `beforeend`,
+};
+export const SortType = {
+  DEFAULT: `event`,
+  TIME: `time`,
+  PRICE: `price`
 };
 export const KeyCode = {
   ESCAPE: 27

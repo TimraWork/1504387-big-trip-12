@@ -8,6 +8,8 @@ import EventEditView from "../view/event-edit.js";
 import {getTripDays, filterEventsByDays} from '../utils/event.js';
 import {render, replace} from '../utils/render.js';
 import {RenderPosition, KeyCode} from '../const.js';
+import {sortTime, sortPrice} from "../utils/event.js";
+import {SortType} from "../const.js";
 
 export default class Trip {
   constructor(tripContainer) {
@@ -16,15 +18,54 @@ export default class Trip {
     this._sortComponent = new SortView();
     this._noEventComponent = new NoEventView();
     this._EventsHistoryComponent = new EventsHistoryView();
+
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(tripEvents) {
     this._tripEvents = tripEvents.slice();
+    this._sourcedTripEvents = tripEvents.slice();
+
+    this._tripDays = getTripDays(this._tripEvents);
+
     this._renderTrip();
+  }
+
+  _sortEvents(sortType) {
+    switch (sortType) {
+      case SortType.TIME:
+        this._tripDays = undefined;
+        this._tripEvents.sort(sortTime);
+        break;
+      case SortType.PRICE:
+        this._tripDays = undefined;
+        this._tripEvents.sort(sortPrice);
+        break;
+      default:
+        this._tripDays = getTripDays(this._tripEvents);
+        this._tripEvents = this._sourcedTripEvents.slice();
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortEvents(sortType);
+    this._clearEventsList();
+    this._renderEvents();
+  }
+
+  _clearEventsList() {
+    this._EventsHistoryComponent.getElement().innerHTML = ``;
   }
 
   _renderSort() {
     render(this._tripContainer, this._sortComponent, RenderPosition.AFTER_BEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _addEventHandlers(eventContainer, eventComponent, eventEditComponent) {
@@ -75,7 +116,9 @@ export default class Trip {
     const eventsNode = this._createDaysNode();
 
     eventsNode.querySelectorAll(`.trip-events__list`).forEach((dayNode) => {
-      const filteredEventsByDay = filterEventsByDays(this._tripEvents, dayNode.dataset.day);
+      const filteredEventsByDay = dayNode.dataset.day ?
+        filterEventsByDays(this._tripEvents, dayNode.dataset.day) :
+        this._tripEvents;
 
       filteredEventsByDay.forEach((event) => {
         this._createEventNode(event, dayNode);
@@ -88,9 +131,13 @@ export default class Trip {
   _createDaysNode() {
     const tripDaysNode = this._EventsHistoryComponent.getElement();
 
-    getTripDays(this._tripEvents).forEach((day, index) => {
-      tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
-    });
+    if (this._tripDays) {
+      this._tripDays.forEach((day, index) => {
+        tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
+      });
+    } else {
+      tripDaysNode.appendChild(new EventDayView(this._tripDays).getElement());
+    }
 
     return tripDaysNode;
   }
