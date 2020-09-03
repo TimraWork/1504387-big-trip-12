@@ -2,12 +2,12 @@ import SortView from "../view/sort.js";
 import NoEventView from "../view/no-event.js";
 import EventsHistoryView from "../view/events-history.js";
 import EventDayView from "../view/event-day.js";
-import EventView from "../view/event.js";
-import EventEditView from "../view/event-edit.js";
+
+import EventPresenter from "./event.js";
 
 import {getTripDays, filterEventsByDays} from '../utils/event.js';
-import {render, replace} from '../utils/render.js';
-import {RenderPosition, KeyCode} from '../const.js';
+import {render} from '../utils/render.js';
+import {RenderPosition} from '../const.js';
 import {sortTime, sortPrice} from "../utils/event.js";
 import {SortType} from "../const.js";
 
@@ -68,49 +68,12 @@ export default class Trip {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _addEventHandlers(eventContainer, eventComponent, eventEditComponent) {
-    const replaceCardToForm = () => {
-      replace(eventContainer, eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(eventContainer, eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.keyCode === KeyCode.ESCAPE) {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormResetHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-  }
-
+  // ------------------------- Изменено -------------------------
   _createEventNode(event, dayNode) {
-    const eventComponent = new EventView(event);
-    const eventEditComponent = new EventEditView(event);
-
-    const eventNode = dayNode.appendChild(eventComponent.getElement());
-
-    this._addEventHandlers(dayNode, eventComponent, eventEditComponent);
-
-    return eventNode;
+    const eventPresenter = new EventPresenter(this._EventsHistoryComponent);
+    eventPresenter.init(event, dayNode);
   }
+  // ------------------------- Изменено -------------------------
 
   _createEventsByDayNode() {
     const eventsNode = this._createDaysNode();
