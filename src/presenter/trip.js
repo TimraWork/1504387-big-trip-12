@@ -68,12 +68,10 @@ export default class Trip {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  // ------------------------- Изменено -------------------------
   _createEventNode(event, dayNode) {
     const eventPresenter = new EventPresenter(this._EventsHistoryComponent);
     eventPresenter.init(event, dayNode);
   }
-  // ------------------------- Изменено -------------------------
 
   _createEventsByDayNode() {
     const eventsNode = this._createDaysNode();

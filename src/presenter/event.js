@@ -1,10 +1,12 @@
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
-import {replace} from '../utils/render.js';
+import {replace, remove} from '../utils/render.js';
 import {KeyCode} from '../const.js';
 
 export default class Event {
-  constructor() {
+  constructor(eventListContainer) {
+    this._eventListContainer = eventListContainer;
+
     this._eventComponent = null;
     this._eventEditComponent = null;
 
@@ -18,19 +20,43 @@ export default class Event {
     this._event = event;
     this._dayNode = dayNode;
 
+    const prevEventComponent = this._eventComponent;
+    const prevEventEditComponent = this._eventEditComponent;
+
     this._eventComponent = new EventView(this._event);
     this._eventEditComponent = new EventEditView(this._event);
-
-    this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormResetHandler(this._handleResetClick);
 
+    if (prevEventComponent === null || prevEventEditComponent === null) {
+      this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
+
+      return this._eventNode;
+    }
+
+    if (this._eventListContainer.getElement().contains(prevEventComponent.getElement())) {
+      replace(this._dayNode, this._eventComponent, prevEventComponent);
+    }
+
+    if (this._eventListContainer.getElement().contains(prevEventEditComponent.getElement())) {
+      replace(this._dayNode, this._eventEditComponent, prevEventEditComponent);
+    }
+
+    remove(prevEventComponent);
+    remove(prevEventEditComponent);
+
     return this._eventNode;
   }
 
+  destroy() {
+    remove(this._eventComponent);
+    remove(this._eventEditComponent);
+  }
+
   _replaceCardToForm() {
+    // remove(this._eventComponent);
     replace(this._dayNode, this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
