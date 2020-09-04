@@ -30,9 +30,10 @@ export default class Event {
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormResetHandler(this._handleResetClick);
 
+
     if (prevEventComponent === null || prevEventEditComponent === null) {
       this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
-
+      // console.log(`prevEventComponent = `, this._eventNode);
       return this._eventNode;
     }
 
@@ -56,7 +57,6 @@ export default class Event {
   }
 
   _replaceCardToForm() {
-    // remove(this._eventComponent);
     replace(this._dayNode, this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }

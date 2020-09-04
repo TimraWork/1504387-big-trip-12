@@ -14,6 +14,8 @@ import {SortType} from "../const.js";
 export default class Trip {
   constructor(tripContainer) {
     this._tripContainer = tripContainer;
+    this._currentSortType = SortType.DEFAULT;
+    this._eventPresenter = {};
 
     this._sortComponent = new SortView();
     this._noEventComponent = new NoEventView();
@@ -59,18 +61,28 @@ export default class Trip {
     this._renderEvents();
   }
 
-  _clearEventsList() {
-    this._EventsHistoryComponent.getElement().innerHTML = ``;
-  }
-
   _renderSort() {
     render(this._tripContainer, this._sortComponent, RenderPosition.AFTER_BEGIN);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
+  _clearEventsList() {
+    // this._EventsHistoryComponent.getElement().innerHTML = ``;
+
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => {
+        presenter.destroy();
+      });
+
+    this._eventPresenter = {};
+  }
+
   _createEventNode(event, dayNode) {
     const eventPresenter = new EventPresenter(this._EventsHistoryComponent);
     eventPresenter.init(event, dayNode);
+    this._eventPresenter[event.id] = eventPresenter;
+    // console.log(`EVENTPRESENTER =`, eventPresenter);
   }
 
   _createEventsByDayNode() {

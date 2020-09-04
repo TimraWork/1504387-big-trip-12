@@ -27,6 +27,8 @@ const OFFERS = [
   {name: `rent`, label: `Rent a car`, price: 200, isChecked: Boolean(getRandomInteger(0, 1)), types: [`drive`]},
 ];
 
+const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
+
 const generateOffers = (type) => {
   return OFFERS.filter((offer)=>offer.types.includes(type));
 };
@@ -80,6 +82,7 @@ const generateDateRange = () => {
 export const generateEvent = () => {
   const name = generateType();
   return {
+    id: generateId(),
     type: {
       name,
       offers: generateOffers(name),
