@@ -4,15 +4,18 @@ import {replace, remove} from '../utils/render.js';
 import {KeyCode} from '../const.js';
 
 export default class Event {
-  constructor(eventListContainer) {
+  constructor(eventListContainer, changeData) {
     this._eventListContainer = eventListContainer;
+    this._changeData = changeData;
 
     this._eventComponent = null;
     this._eventEditComponent = null;
 
     this._handleEditClick = this._handleEditClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleResetClick = this._handleResetClick.bind(this);
+    this._handleCloseClick = this._handleCloseClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
@@ -26,10 +29,11 @@ export default class Event {
     this._eventComponent = new EventView(this._event);
     this._eventEditComponent = new EventEditView(this._event);
 
-
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormResetHandler(this._handleResetClick);
+    this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventEditComponent.setFormCloseClickHandler(this._handleCloseClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
@@ -37,11 +41,11 @@ export default class Event {
     }
 
     if (this._eventListContainer.getElement().contains(prevEventComponent.getElement())) {
-      replace(this._dayNode, this._eventComponent, prevEventComponent);
+      replace(this._eventComponent, prevEventComponent);
     }
 
     if (this._eventListContainer.getElement().contains(prevEventEditComponent.getElement())) {
-      replace(this._dayNode, this._eventEditComponent, prevEventEditComponent);
+      replace(this._eventEditComponent, prevEventEditComponent);
     }
 
     remove(prevEventComponent);
@@ -54,12 +58,12 @@ export default class Event {
   }
 
   _replaceCardToForm() {
-    replace(this._dayNode, this._eventEditComponent, this._eventComponent);
+    replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   _replaceFormToCard() {
-    replace(this._dayNode, this._eventComponent, this._eventEditComponent);
+    replace(this._eventComponent, this._eventEditComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
@@ -74,12 +78,28 @@ export default class Event {
     this._replaceCardToForm();
   }
 
+  _handleCloseClick() {
+    this._replaceFormToCard();
+  }
+
   _handleFormSubmit() {
     this._replaceFormToCard();
   }
 
   _handleResetClick() {
     this._replaceFormToCard();
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+        Object.assign(
+            {},
+            this._event,
+            {
+              isFavorite: !this._event.isFavorite
+            }
+        )
+    );
   }
 
 }

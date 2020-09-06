@@ -88,7 +88,7 @@ export default class Trip {
   }
 
   _createEventNode(event, dayNode) {
-    const eventPresenter = new EventPresenter(this._EventsHistoryComponent);
+    const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange);
     eventPresenter.init(event, dayNode);
 
     this._eventPresenter[event.id] = eventPresenter;

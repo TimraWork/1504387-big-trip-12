@@ -74,7 +74,7 @@ const createDestinationTemplate = ({name, photos, destination}) => {
 };
 
 const createEventFormTemplate = (event) => {
-  const {type, city, price, dateRange} = event;
+  const {id, type, city, price, dateRange, isFavorite} = event;
   const {name: eventType, offers} = type;
   const {name: eventCity} = city;
 
@@ -188,6 +188,19 @@ const createEventFormTemplate = (event) => {
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
               <button class="event__reset-btn" type="reset">Cancel</button>
+
+              <input id="event-favorite-${id}" class="event__favorite-checkbox  visually-hidden" type="checkbox" name="event-favorite" ${isFavorite ? `checked` : ``}>
+              <label class="event__favorite-btn" for="event-favorite-${id}">
+                <span class="visually-hidden">Add to favorite</span>
+                <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
+                  <path d="M14 21l-8.22899 4.3262 1.57159-9.1631L.685209 9.67376 9.8855 8.33688 14 0l4.1145 8.33688 9.2003 1.33688-6.6574 6.48934 1.5716 9.1631L14 21z"></path>
+                </svg>
+              </label>
+
+              <button class="event__rollup-btn" type="button">
+                <span class="visually-hidden">Open event</span>
+              </button>
+
             </header>
 
             ${ (offersTemplate || destinationTemplate) ? `<section class="event__details">
@@ -204,6 +217,8 @@ export default class EventEdit extends AbstractView {
     this._event = event || BLANK_EVENT;
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
+    this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -216,8 +231,18 @@ export default class EventEdit extends AbstractView {
   }
 
   _formResetHandler(evt) {
-    evt.preventDefault();
+    evt.preventDefault(this._event);
     this._callback.formReset();
+  }
+
+  _favoriteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.favoriteClick();
+  }
+
+  _formCloseClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeClick();
   }
 
   setFormSubmitHandler(callback) {
@@ -225,8 +250,18 @@ export default class EventEdit extends AbstractView {
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
   }
 
+  setFormCloseClickHandler(callback) {
+    this._callback.closeClick = callback;
+    this.getElement().querySelector(`.event__rollup-btn`).addEventListener(`click`, this._formCloseClickHandler);
+  }
+
   setFormResetHandler(callback) {
     this._callback.formReset = callback;
     this.getElement().addEventListener(`reset`, this._formResetHandler);
+  }
+
+  setFavoriteClickHandler(callback) {
+    this._callback.favoriteClick = callback;
+    this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
   }
 }

@@ -93,6 +93,7 @@ export const generateEvent = () => {
       destination: generateDescription(),
       photos: generatePhotos(),
     },
+    isFavorite: Boolean(getRandomInteger(0, 1)),
     price: generatePrice()
   };
 };
