@@ -50,6 +50,5 @@ export const remove = (component) => {
   }
 
   component.getElement().remove();
-  console.log(`component.getElement() = `, component.getElement());
   component.removeElement();
 };

@@ -26,15 +26,14 @@ export default class Event {
     this._eventComponent = new EventView(this._event);
     this._eventEditComponent = new EventEditView(this._event);
 
+
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormResetHandler(this._handleResetClick);
 
-
     if (prevEventComponent === null || prevEventEditComponent === null) {
       this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
-      // console.log(`prevEventComponent = `, this._eventNode);
-      return this._eventNode;
+      return;
     }
 
     if (this._eventListContainer.getElement().contains(prevEventComponent.getElement())) {
@@ -47,8 +46,6 @@ export default class Event {
 
     remove(prevEventComponent);
     remove(prevEventEditComponent);
-
-    return this._eventNode;
   }
 
   destroy() {

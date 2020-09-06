@@ -71,14 +71,14 @@ const createEventTemplate = ({type, city, dateRange, price}) => {
 };
 
 export default class Event extends AbstractView {
-  constructor(events) {
+  constructor(event) {
     super();
-    this._events = events;
+    this._event = event;
     this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createEventTemplate(this._events);
+    return createEventTemplate(this._event);
   }
 
   _editClickHandler(evt) {
