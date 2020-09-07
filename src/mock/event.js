@@ -34,7 +34,7 @@ const generateOffers = (type) => {
 };
 
 const generateType = () => {
-  const types = [...EVENT_TYPE.movements, ...EVENT_TYPE.activities];
+  const types = [...EVENT_TYPE.transfers, ...EVENT_TYPE.activities];
   return types[getRandomInteger(0, types.length - 1)];
 };
 

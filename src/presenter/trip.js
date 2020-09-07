@@ -70,11 +70,6 @@ export default class Trip {
     this._renderEvents();
   }
 
-  _renderSort() {
-    render(this._tripContainer, this._sortComponent, RenderPosition.AFTER_BEGIN);
-    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
-  }
-
   _clearEventsList() {
     Object
       .values(this._eventPresenter)
@@ -130,6 +125,11 @@ export default class Trip {
     });
 
     return eventsListNode;
+  }
+
+  _renderSort() {
+    render(this._tripContainer, this._sortComponent, RenderPosition.AFTER_BEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderEvents() {

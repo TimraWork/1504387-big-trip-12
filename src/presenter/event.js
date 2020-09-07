@@ -82,7 +82,8 @@ export default class Event {
     this._replaceFormToCard();
   }
 
-  _handleFormSubmit() {
+  _handleFormSubmit(event) {
+    this._changeData(event);
     this._replaceFormToCard();
   }
 
