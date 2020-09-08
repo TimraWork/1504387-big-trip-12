@@ -239,6 +239,17 @@ export default class EventEdit extends AbstractView {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
+  updateElement() {
+    let prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+    prevElement = null;
+  }
+
   static parseEventToData(event) {
     return Object.assign(
         {},
