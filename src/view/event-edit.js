@@ -250,6 +250,20 @@ export default class EventEdit extends AbstractView {
     prevElement = null;
   }
 
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+
+    this._data = Object.assign(
+        {},
+        this._data,
+        update
+    );
+
+    this.updateElement();
+  }
+
   static parseEventToData(event) {
     return Object.assign(
         {},
