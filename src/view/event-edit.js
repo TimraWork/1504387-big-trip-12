@@ -1,7 +1,7 @@
 import AbstractView from './abstract.js';
 import {EVENT_TYPE} from '../const.js';
 import {formatDateTime, generateId} from '../utils/common.js';
-import {formatEventType, capitalizeFirstLetter, getOffersByType, getOffers, getDestinationByData} from '../utils/event.js';
+import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData} from '../utils/event.js';
 
 const BLANK_EVENT = {
   id: generateId(),
@@ -68,18 +68,19 @@ const createEventTypeTemplate = (id, eventType) => {
 };
 
 const createDestinationTemplate = (destination, dataDestinations) => {
+  const isDestinationCorrect = dataDestinations.map((element) => element.name).includes(destination);
 
-  const photos = destination ?
+  const photos = isDestinationCorrect ?
     getDestinationByData(destination, dataDestinations).photos :
     [];
 
-  const description = destination ?
+  const description = isDestinationCorrect ?
     getDestinationByData(destination, dataDestinations).description :
     ``;
 
   const photosTemplate = createPhotosTemplate(photos);
 
-  if (photos.length) {
+  if (photos.length || description.length) {
 
     return `<section class="event__section  event__section--destination">
               <h3 class="event__section-title  event__section-title--destination">Destination</h3>
@@ -120,7 +121,7 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations) => {
 
               <div class="event__field-group  event__field-group--destination">
                 <label class="event__label  event__type-output" for="event-destination-${id}">${typeWithLabel}</label>
-                <input autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination}" list="destination-list-${id}">
+                <input required="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination}" list="destination-list-${id}">
                 ${destinationsTemplate}
               </div>
 
@@ -266,9 +267,23 @@ export default class EventEdit extends AbstractView {
   }
 
   _changeDestinationInputHandler(evt) {
-    this.updateData({
-      destination: evt.target.value
-    });
+
+    const destinationInput = evt.target;
+    const eventEditForm = this.getElement();
+
+    const isDataCorrect = this._destinations.map((destination) => destination.name).includes(destinationInput.value);
+
+    if (destinationInput.validity.valueMissing) {
+      destinationInput.setCustomValidity(`Please, select value from the list below`);
+    } else if (!isDataCorrect) {
+      destinationInput.setCustomValidity(`Please, remove everything and select value from the list below`);
+    } else {
+      destinationInput.setCustomValidity(``);
+      this.updateData({
+        destination: evt.target.value
+      });
+    }
+    eventEditForm.reportValidity();
   }
 
   setFormSubmitHandler(callback) {
@@ -305,7 +320,7 @@ export default class EventEdit extends AbstractView {
     this.restoreHandlers();
   }
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -315,6 +330,10 @@ export default class EventEdit extends AbstractView {
         this._data,
         update
     );
+
+    if (justDataUpdating) {
+      return;
+    }
 
     this.updateElement();
   }
