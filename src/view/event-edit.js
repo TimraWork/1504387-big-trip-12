@@ -1,50 +1,16 @@
 import AbstractView from './abstract.js';
 import {EVENT_TYPE} from '../const.js';
-import {formatDateTime} from '../utils/common.js';
-import {formatEventType, capitalizeFirstLetter} from '../utils/event.js';
+import {formatDateTime, generateId} from '../utils/common.js';
+import {formatEventType, capitalizeFirstLetter, getOffersByType, getOffers, getDestinationByData} from '../utils/event.js';
 
 const BLANK_EVENT = {
-  type: {
-    name: EVENT_TYPE.transfers[0],
-    offers: [],
-  },
+  id: generateId(),
+  type: `bus`,
   dateRange: [new Date(), new Date()],
-  city: {
-    name: ``,
-    destination: ``,
-    photos: [],
-  },
+  offers: [],
+  destination: ``,
   price: 0,
   isFavorite: false
-};
-
-const createOfferItemTemplate = ({name, isChecked, label, price}) => {
-  const checked = isChecked ? `checked` : ``;
-
-  return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${checked}>
-            <label class="event__offer-label" for="event-offer-${name}-1">
-              <span class="event__offer-title">${label}</span>
-              &plus;
-              &euro;&nbsp;<span class="event__offer-price">${price}</span>
-            </label>
-          </div>`;
-};
-
-const createOffersTemplate = (offers) => {
-  if (offers.length) {
-
-    return `<section class="event__section  event__section--offers">
-              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
-              <div class="event__available-offers">
-                ${offers
-                  .map((offer)=> createOfferItemTemplate(offer))
-                  .join(``)}
-              </div>
-            </section>`;
-  }
-
-  return ``;
 };
 
 const createPhotosTemplate = (photos) => {
@@ -57,21 +23,6 @@ const createPhotosTemplate = (photos) => {
                   .join(``)}
             </div>
           </div>`;
-};
-
-const createDestinationTemplate = ({name, photos, destination}) => {
-  const photosTemplate = createPhotosTemplate(photos);
-
-  if (name.length) {
-
-    return `<section class="event__section  event__section--destination">
-              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-              <p class="event__destination-description">${destination}</p>
-              ${photosTemplate}
-            </section>`;
-  }
-
-  return ``;
 };
 
 const createFavoriteButtonTemplate = (id, isFavorite) => {
@@ -94,41 +45,73 @@ const createEventTypeTemplate = (id, eventType) => {
 
 
             <div class="event__type-list">
-            ${Object.entries(EVENT_TYPE)
-              .slice(0, 2)
-              .map(([typeName, typeValues]) => {
-                return `
-                    <fieldset class="event__type-group">
-                      <legend class="visually-hidden">${typeName}Transfer</legend>
+              ${Object.entries(EVENT_TYPE)
+                .slice(0, 2)
+                .map(([typeName, typeValues]) => {
+                  return `
+                      <fieldset class="event__type-group">
+                        <legend class="visually-hidden">${typeName}Transfer</legend>
 
-                      ${typeValues
-                          .map((typeValue) => {
-                            return `<div class="event__type-item">
-                                      <input id="event-type-${typeValue}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeValue}" ${eventType === typeValue ? `checked` : ``}>
-                                      <label class="event__type-label  event__type-label--${typeValue}" for="event-type-${typeValue}-${id}">${capitalizeFirstLetter(typeValue)}</label>
-                                    </div>`;
-                          })
-                          .join(``)}
-                    </fieldset>`;
-              })
-              .join(``)}
+                        ${typeValues
+                            .map((typeValue) => {
+                              return `<div class="event__type-item">
+                                        <input id="event-type-${typeValue}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeValue}" ${eventType === typeValue ? `checked` : ``}>
+                                        <label class="event__type-label  event__type-label--${typeValue}" for="event-type-${typeValue}-${id}">${capitalizeFirstLetter(typeValue)}</label>
+                                      </div>`;
+                            })
+                            .join(``)}
+                      </fieldset>`;
+                })
+                .join(``)}
               </div>
             </div>`;
 };
 
-const createEventFormTemplate = (data) => {
-  const {id, type, city, price, dateRange, isFavorite} = data;
-  const {name: eventType, offers} = type;
-  const {name: eventCity} = city;
+const createDestinationTemplate = (destination, dataDestinations) => {
 
-  const typeWithLabel = formatEventType(eventType);
+  const photos = destination ?
+    getDestinationByData(destination, dataDestinations).photos :
+    [];
+
+  const description = destination ?
+    getDestinationByData(destination, dataDestinations).description :
+    ``;
+
+  const photosTemplate = createPhotosTemplate(photos);
+
+  if (photos.length) {
+
+    return `<section class="event__section  event__section--destination">
+              <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+              <p class="event__destination-description">${description}</p>
+              ${photosTemplate}
+            </section>`;
+  }
+
+  return ``;
+};
+
+const createDestinationsTemplate = (id, destinations) => {
+  return `<datalist id="destination-list-${id}">
+            ${destinations
+              .map((destination)=>{
+                return `<option value="${destination.name}"></option>`;
+              })}
+          </datalist>`;
+};
+
+const createEventFormTemplate = (data, dataOffers, dataDestinations) => {
+  const {id, type, destination, offers, price, dateRange, isFavorite} = data;
+
+  const typeWithLabel = formatEventType(type);
   const startDateTime = formatDateTime(dateRange[0]);
   const endDateTime = formatDateTime(dateRange[1]);
 
-  const destinationTemplate = createDestinationTemplate(city);
-  const offersTemplate = createOffersTemplate(offers);
+  const destinationTemplate = createDestinationTemplate(destination, dataDestinations);
+  const offersTemplate = createOffersTemplate(offers, dataOffers, type);
+  const destinationsTemplate = createDestinationsTemplate(id, dataDestinations);
   const favoriteButtonTemplate = createFavoriteButtonTemplate(id, isFavorite);
-  const eventTypeTemplate = createEventTypeTemplate(id, eventType);
+  const eventTypeTemplate = createEventTypeTemplate(id, type);
 
   return `<form class="trip-events__item  event  event--edit" action="#" method="post">
             <header class="event__header">
@@ -136,14 +119,9 @@ const createEventFormTemplate = (data) => {
               ${eventTypeTemplate}
 
               <div class="event__field-group  event__field-group--destination">
-                <label class="event__label  event__type-output" for="event-destination-1">${typeWithLabel}</label>
-                <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${eventCity}" list="destination-list-1">
-                <datalist id="destination-list-1">
-                  <option value="Amsterdam"></option>
-                  <option value="Geneva"></option>
-                  <option value="Chamonix"></option>
-                  <option value="Saint Petersburg"></option>
-                </datalist>
+                <label class="event__label  event__type-output" for="event-destination-${id}">${typeWithLabel}</label>
+                <input autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination}" list="destination-list-${id}">
+                ${destinationsTemplate}
               </div>
 
               <div class="event__field-group  event__field-group--time">
@@ -185,27 +163,88 @@ const createEventFormTemplate = (data) => {
           </form>`;
 };
 
+const createOfferItemTemplate = (offer, isChecked) => {
+  const {name, label, price} = offer;
+  const checked = isChecked ? `checked` : ``;
+
+  return `<div class="event__offer-selector">
+            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${checked}>
+            <label class="event__offer-label" for="event-offer-${name}-1">
+              <span class="event__offer-title">${label}</span>
+              &plus;
+              &euro;&nbsp;<span class="event__offer-price">${price}</span>
+            </label>
+          </div>`;
+};
+
+const createOffersTemplate = (offers, dataOffers, type) => {
+  const offersByType = getOffers(dataOffers, type);
+  let isChecked = false;
+
+  if (offersByType.length) {
+
+    return `<section class="event__section  event__section--offers">
+              <h3 class="event__section-title  event__section-title--offers">Offers</h3>
+              <div class="event__available-offers">
+                ${offersByType
+                  .map((offer) => {
+                    isChecked = offers.includes(offer.name) ? true : false;
+                    return createOfferItemTemplate(offer, isChecked, dataOffers);
+                  })
+                  .join(``)}
+              </div>
+            </section>`;
+  }
+
+  return ``;
+};
 export default class EventEdit extends AbstractView {
-  constructor(event = BLANK_EVENT) {
+  constructor(event = BLANK_EVENT, offers, destinations) {
     super();
     this._data = EventEdit.parseEventToData(event); // Static method call
+
+    this._offers = offers;
+    this._destinations = destinations;
+
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._formResetHandler = this._formResetHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
+    this._changeTypeInputHandler = this._changeTypeInputHandler.bind(this);
+    this._changeDestinationInputHandler = this._changeDestinationInputHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._data);
+    return createEventFormTemplate(this._data, this._offers, this._destinations);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setFormResetHandler(this._callback.formReset);
+    this.setFormCloseClickHandler(this._callback.closeClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelectorAll(`.event__type-input`)
+      .forEach((input) => {
+        input.addEventListener(`input`, this._changeTypeInputHandler);
+      });
+
+    this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._changeDestinationInputHandler);
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
+    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data, this._offers, this._destinations));
   }
 
   _formResetHandler(evt) {
-    evt.preventDefault(this._event);
+    evt.preventDefault();
     this._callback.formReset();
   }
 
@@ -217,6 +256,19 @@ export default class EventEdit extends AbstractView {
   _formCloseClickHandler(evt) {
     evt.preventDefault();
     this._callback.closeClick();
+  }
+
+  _changeTypeInputHandler(evt) {
+    this.updateData({
+      type: evt.target.value,
+      offers: []
+    });
+  }
+
+  _changeDestinationInputHandler(evt) {
+    this.updateData({
+      destination: evt.target.value
+    });
   }
 
   setFormSubmitHandler(callback) {
@@ -241,6 +293,7 @@ export default class EventEdit extends AbstractView {
 
   updateElement() {
     let prevElement = this.getElement();
+
     const parent = prevElement.parentElement;
     this.removeElement();
 
@@ -248,6 +301,8 @@ export default class EventEdit extends AbstractView {
 
     parent.replaceChild(newElement, prevElement);
     prevElement = null;
+
+    this.restoreHandlers();
   }
 
   updateData(update) {
@@ -265,15 +320,12 @@ export default class EventEdit extends AbstractView {
   }
 
   static parseEventToData(event) {
-    return Object.assign(
-        {},
-        event
-    );
+    const parsedEvent = Object.assign({}, event);
+    return parsedEvent;
   }
 
   static parseDataToEvent(data) {
     data = Object.assign({}, data);
-
     return data;
   }
 }

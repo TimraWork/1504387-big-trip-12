@@ -18,6 +18,7 @@ export default class Trip {
     this._currentSortType = SortType.DEFAULT;
     this._eventPresenter = {};
     this._tripDayNodes = [];
+    this.dayNode = null;
 
     this._sortComponent = new SortView();
     this._noEventComponent = new NoEventView();
@@ -27,7 +28,10 @@ export default class Trip {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(tripEvents) {
+  init(tripEvents, tripOffers, tripDestinations) {
+    this._tripOffers = tripOffers;
+    this._tripDestinations = tripDestinations;
+
     this._tripEvents = tripEvents.slice();
     this._sourcedTripEvents = tripEvents.slice();
 
@@ -57,7 +61,7 @@ export default class Trip {
   _handleEventChange(updatedEvent) {
     this._tripEvents = updateItem(this._tripEvents, updatedEvent);
     this._sourcedTripEvents = updateItem(this._sourcedTripEvents, updatedEvent);
-    this._eventPresenter[updatedEvent.id].init(updatedEvent);
+    this._eventPresenter[updatedEvent.id].init(updatedEvent, this.dayNode, this._tripOffers, this._tripDestinations);
   }
 
   _handleSortTypeChange(sortType) {
@@ -84,7 +88,7 @@ export default class Trip {
 
   _createEventNode(event, dayNode) {
     const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange);
-    eventPresenter.init(event, dayNode);
+    eventPresenter.init(event, dayNode, this._tripOffers, this._tripDestinations);
 
     this._eventPresenter[event.id] = eventPresenter;
   }
@@ -115,12 +119,14 @@ export default class Trip {
 
     this._tripDayNodes.forEach((dayNode) => {
 
+      this.dayNode = dayNode;
+
       const filteredEventsByDay = dayNode.dataset.day ?
         filterEventsByDays(this._tripEvents, dayNode.dataset.day) :
         this._tripEvents;
 
       filteredEventsByDay.forEach((event) => {
-        this._createEventNode(event, dayNode);
+        this._createEventNode(event, this.dayNode);
       });
     });
 
