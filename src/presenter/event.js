@@ -70,6 +70,8 @@ export default class Event {
   _escKeyDownHandler(evt) {
     if (evt.keyCode === KeyCode.ESCAPE) {
       evt.preventDefault();
+
+      this._eventEditComponent.reset(this._event);
       this._replaceFormToCard();
     }
   }

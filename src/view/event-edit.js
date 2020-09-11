@@ -1,4 +1,4 @@
-import AbstractView from './abstract.js';
+import SmartView from "./smart.js";
 import {EVENT_TYPE} from '../const.js';
 import {formatDateTime, generateId} from '../utils/common.js';
 import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData} from '../utils/event.js';
@@ -199,7 +199,7 @@ const createOffersTemplate = (offers, dataOffers, type) => {
 
   return ``;
 };
-export default class EventEdit extends AbstractView {
+export default class EventEdit extends SmartView {
   constructor(event = BLANK_EVENT, offers, destinations) {
     super();
     this._data = EventEdit.parseEventToData(event); // Static method call
@@ -246,6 +246,7 @@ export default class EventEdit extends AbstractView {
 
   _formResetHandler(evt) {
     evt.preventDefault();
+    this.reset(this._data);
     this._callback.formReset();
   }
 
@@ -306,36 +307,8 @@ export default class EventEdit extends AbstractView {
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
   }
 
-  updateElement() {
-    let prevElement = this.getElement();
-
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-    prevElement = null;
-
-    this.restoreHandlers();
-  }
-
-  updateData(update, justDataUpdating) {
-    if (!update) {
-      return;
-    }
-
-    this._data = Object.assign(
-        {},
-        this._data,
-        update
-    );
-
-    if (justDataUpdating) {
-      return;
-    }
-
-    this.updateElement();
+  reset(event) {
+    this.updateData(EventEdit.parseEventToData(event));
   }
 
   static parseEventToData(event) {
