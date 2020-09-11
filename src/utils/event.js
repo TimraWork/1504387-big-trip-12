@@ -103,3 +103,19 @@ export const getEventsTotalPrice = (events, dataOffers) => {
 
   return totalSum;
 };
+
+
+export const validateDestination = (destinationInput, eventEditForm, destinations, callback) => {
+  const isDataCorrect = destinations.map((destination) => destination.name).includes(destinationInput.value);
+
+  if (destinationInput.validity.valueMissing) {
+    destinationInput.setCustomValidity(`Please, select value from the list below`);
+  } else if (!isDataCorrect) {
+    destinationInput.setCustomValidity(`Please, remove everything and select value from the list below`);
+  } else {
+    destinationInput.setCustomValidity(``);
+
+    callback();
+  }
+  eventEditForm.reportValidity();
+};

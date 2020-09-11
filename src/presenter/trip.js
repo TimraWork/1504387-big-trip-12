@@ -25,6 +25,7 @@ export default class Trip {
     this._EventsHistoryComponent = new EventsHistoryView();
 
     this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
@@ -38,6 +39,12 @@ export default class Trip {
     this._tripDays = getTripDays(this._tripEvents);
 
     this._renderTrip();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _sortEvents(sortType) {
@@ -87,7 +94,7 @@ export default class Trip {
   }
 
   _createEventNode(event, dayNode) {
-    const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange);
+    const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange, this._handleModeChange);
     eventPresenter.init(event, dayNode, this._tripOffers, this._tripDestinations);
 
     this._eventPresenter[event.id] = eventPresenter;

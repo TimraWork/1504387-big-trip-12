@@ -1,7 +1,7 @@
 import SmartView from "./smart.js";
 import {EVENT_TYPE} from '../const.js';
 import {formatDateTime, generateId} from '../utils/common.js';
-import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData} from '../utils/event.js';
+import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination} from '../utils/event.js';
 
 const BLANK_EVENT = {
   id: generateId(),
@@ -211,7 +211,6 @@ export default class EventEdit extends SmartView {
     this._formResetHandler = this._formResetHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
-    this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._changeTypeInputHandler = this._changeTypeInputHandler.bind(this);
     this._changeDestinationInputHandler = this._changeDestinationInputHandler.bind(this);
 
@@ -253,6 +252,10 @@ export default class EventEdit extends SmartView {
   _favoriteClickHandler(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
+
+    this.updateData({
+      isFavorite: !this._data.isFavorite
+    });
   }
 
   _formCloseClickHandler(evt) {
@@ -269,22 +272,13 @@ export default class EventEdit extends SmartView {
 
   _changeDestinationInputHandler(evt) {
 
-    const destinationInput = evt.target;
-    const eventEditForm = this.getElement();
-
-    const isDataCorrect = this._destinations.map((destination) => destination.name).includes(destinationInput.value);
-
-    if (destinationInput.validity.valueMissing) {
-      destinationInput.setCustomValidity(`Please, select value from the list below`);
-    } else if (!isDataCorrect) {
-      destinationInput.setCustomValidity(`Please, remove everything and select value from the list below`);
-    } else {
-      destinationInput.setCustomValidity(``);
+    const callback = () => {
       this.updateData({
         destination: evt.target.value
       });
-    }
-    eventEditForm.reportValidity();
+    };
+
+    validateDestination(evt.target, this.getElement(), this._destinations, callback);
   }
 
   setFormSubmitHandler(callback) {
