@@ -1,4 +1,4 @@
-import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER} from '../const.js';
+import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER, OFFERS_DATA} from '../const.js';
 import {formatMonthDate, formatDate} from './common.js';
 
 export const capitalizeFirstLetter = (string) => {
@@ -7,8 +7,8 @@ export const capitalizeFirstLetter = (string) => {
 
 export const formatEventType = (type) => {
   const labels = EVENT_TYPE.joinLabels;
-  const movements = EVENT_TYPE.movements;
-  const label = movements.includes(type) ? labels[0] : labels[1];
+  const transfers = EVENT_TYPE.transfers;
+  const label = transfers.includes(type) ? labels[0] : labels[1];
 
   return `${capitalizeFirstLetter(type)}  ${label}`;
 };
@@ -24,7 +24,7 @@ export const filterEventsByDays = (events, day) => {
 };
 
 export const getEventsCitiesTitles = (events) => {
-  const cities = events.map((event) => event.city.name);
+  const cities = events.map((event) => event.destination);
 
   const titlesWithDividers = `${cities.join(TEXT_DIVIDER)}`;
   const titlesWithEllipsis = `${cities[0]} ${TEXT_DIVIDER} ... ${TEXT_DIVIDER} ${cities[cities.length - 1]}`;
@@ -61,11 +61,40 @@ export const getEventDuration = (dateRange) => {
   return `${diffDay} ${diffHour} ${diffMinutes}`;
 };
 
+export const sortTime = (eventA, eventB) => {
+  return eventA.dateRange[0].getTime() - eventB.dateRange[0].getTime();
+};
 
-export const getEventsTotalPrice = (events) => {
+export const sortPrice = (eventA, eventB) => {
+  return eventA.price - eventB.price;
+};
+
+export const getOffersByType = (type) => {
+  return OFFERS_DATA.filter((offer) => offer.types.includes(type));
+};
+
+export const getOffers = (dataOffers, type) => {
+  return dataOffers.filter((offer) => offer.types.includes(type));
+};
+
+export const getOffersByData = (offers, dataOffers) => {
+  const filteredDataOffers = [];
+
+  offers.forEach((offer) =>{
+    filteredDataOffers.push(dataOffers.find((element) => element.name === offer));
+  });
+
+  return filteredDataOffers;
+};
+
+export const getDestinationByData = (destination, dataDestinations) => {
+  return dataDestinations.find((element) => element.name === destination);
+};
+
+export const getEventsTotalPrice = (events, dataOffers) => {
   const totalSum = events.reduce((accumulator, current)=>{
-    const sumOffers = current.type.offers
-      .filter((offer)=>offer.isChecked)
+
+    const sumOffers = getOffersByData(current.offers, dataOffers)
       .map((offer)=>offer.price)
       .reduce((acc, curr) => (acc + curr), 0);
 
@@ -75,10 +104,18 @@ export const getEventsTotalPrice = (events) => {
   return totalSum;
 };
 
-export const sortTime = (eventA, eventB) => {
-  return eventA.dateRange[0].getTime() - eventB.dateRange[0].getTime();
-};
 
-export const sortPrice = (eventA, eventB) => {
-  return eventA.price - eventB.price;
+export const validateDestination = (destinationInput, eventEditForm, destinations, callback) => {
+  const isDataCorrect = destinations.map((destination) => destination.name).includes(destinationInput.value);
+
+  if (destinationInput.validity.valueMissing) {
+    destinationInput.setCustomValidity(`Please, select value from the list below`);
+  } else if (!isDataCorrect) {
+    destinationInput.setCustomValidity(`Please, remove everything and select value from the list below`);
+  } else {
+    destinationInput.setCustomValidity(``);
+
+    callback();
+  }
+  eventEditForm.reportValidity();
 };

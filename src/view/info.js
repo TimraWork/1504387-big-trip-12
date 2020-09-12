@@ -15,25 +15,29 @@ const createCitiesDatesTemplate = (events) => {
   return ``;
 };
 
-const createInfoTemplate = (events) => {
+const createInfoTemplate = (events, offers) => {
   const citiesDatesTemplate = createCitiesDatesTemplate(events);
-  const total = getEventsTotalPrice(events);
+  const total = getEventsTotalPrice(events, offers);
 
-  return `<section class="trip-main__trip-info  trip-info">
-            ${citiesDatesTemplate}
+  if (total || citiesDatesTemplate) {
+    return `<section class="trip-main__trip-info  trip-info">
+           ${citiesDatesTemplate}
             <p class="trip-info__cost">
               Total: &euro;&nbsp;<span class="trip-info__cost-value">${total}</span>
             </p>
           </section>`;
+  }
+  return ``;
 };
 
 export default class Info extends AbstractView {
-  constructor(events) {
+  constructor(events, offers) {
     super();
     this._events = events;
+    this._offers = offers;
   }
 
   getTemplate() {
-    return createInfoTemplate(this._events);
+    return createInfoTemplate(this._events, this._offers);
   }
 }

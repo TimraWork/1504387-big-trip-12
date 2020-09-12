@@ -10,8 +10,7 @@ const createEventDayTemplate = (day, index) => {
                 <span class="day__counter">${index}</span>
                 <time class="day__date" datetime="${day}">${formattedDate}</time>
               </div>
-              <ul class="trip-events__list" data-day=${day}>
-              </ul>
+              <ul class="trip-events__list" data-day=${day}></ul>
             </li>`;
   }
 
@@ -25,6 +24,7 @@ const createEventDayTemplate = (day, index) => {
 export default class EventDay extends AbstractView {
   constructor(day, index) {
     super();
+    this._event = event;
     this._day = day;
     this._index = index;
   }
@@ -32,4 +32,9 @@ export default class EventDay extends AbstractView {
   getTemplate() {
     return createEventDayTemplate(this._day, this._index);
   }
+
+  getDayContainer() {
+    return this.getElement().querySelector(`.trip-events__list`);
+  }
+
 }

@@ -1,6 +1,13 @@
 import {RenderPosition} from '../const.js';
 import Abstract from "../view/abstract.js";
 
+export const createElement = (template) => {
+  const newElement = document.createElement(`div`);
+  newElement.innerHTML = template;
+
+  return newElement.firstChild;
+};
+
 const getNodeElement = (element) => {
   return element instanceof Abstract ? element.getElement() : element;
 };
@@ -26,20 +33,25 @@ export const render = (container, child, place) => {
   }
 };
 
-export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
+export const replace = (newChild, oldChild) => {
 
-  return newElement.firstChild;
-};
-
-export const replace = (container, newChild, oldChild) => {
   oldChild = getNodeElement(oldChild);
   newChild = getNodeElement(newChild);
 
-  if (container === null || oldChild === null || newChild === null) {
+  const parent = oldChild.parentElement;
+
+  if (parent === null || oldChild === null || newChild === null) {
     throw new Error(`Can't replace unexisting elements`);
   }
 
-  container.replaceChild(newChild, oldChild);
+  parent.replaceChild(newChild, oldChild);
+};
+
+export const remove = (component) => {
+  if (!(component instanceof Abstract)) {
+    throw new Error(`Can remove only components`);
+  }
+
+  component.getElement().remove();
+  component.removeElement();
 };

@@ -2,7 +2,7 @@ import {MAX_OFFERS} from '../const.js';
 import AbstractView from './abstract.js';
 
 import {formatTime, formatDateTime} from '../utils/common.js';
-import {formatEventType, getEventDuration} from '../utils/event.js';
+import {formatEventType, getEventDuration, getOffersByData} from '../utils/event.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -18,7 +18,6 @@ const createOffersTemplate = (offers) => {
     return `<h4 class="visually-hidden">Offers:</h4>
             <ul class="event__selected-offers">
               ${ offers
-                  .filter((offer)=> offer.isChecked === true)
                   .slice(0, MAX_OFFERS)
                   .map((offer)=> createOfferTemplate(offer.label, offer.price))
                   .join(``)}
@@ -28,25 +27,25 @@ const createOffersTemplate = (offers) => {
   return ``;
 };
 
-const createEventTemplate = ({type, city, dateRange, price}) => {
-  const {name: eventType, offers} = type;
-  const {name: evenCity} = city;
+const createEventTemplate = (event, dataOffers) => {
 
-  const typeWithLabel = formatEventType(eventType);
+  const {type, destination, dateRange, price, offers} = event;
+
+  const typeWithLabel = formatEventType(type);
   const startTime = formatTime(dateRange[0]);
   const endTime = formatTime(dateRange[1]);
   const startDateTime = formatDateTime(dateRange[0]);
   const endDateTime = formatDateTime(dateRange[1]);
   const duration = getEventDuration(dateRange);
 
-  const offersTemplate = createOffersTemplate(offers);
+  const offersTemplate = createOffersTemplate(getOffersByData(offers, dataOffers));
 
   return `<li class="trip-events__item">
             <div class="event">
               <div class="event__type">
-                <img class="event__type-icon" width="42" height="42" src="img/icons/${eventType}.png" alt="Event type icon">
+                <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
               </div>
-              <h3 class="event__title">${typeWithLabel} ${evenCity}</h3>
+              <h3 class="event__title">${typeWithLabel} ${destination}</h3>
 
               <div class="event__schedule">
                 <p class="event__time">
@@ -71,14 +70,15 @@ const createEventTemplate = ({type, city, dateRange, price}) => {
 };
 
 export default class Event extends AbstractView {
-  constructor(events) {
+  constructor(event, offers) {
     super();
-    this._events = events;
+    this._event = event;
+    this._offers = offers;
     this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
-    return createEventTemplate(this._events);
+    return createEventTemplate(this._event, this._offers);
   }
 
   _editClickHandler(evt) {

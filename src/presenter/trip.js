@@ -2,33 +2,49 @@ import SortView from "../view/sort.js";
 import NoEventView from "../view/no-event.js";
 import EventsHistoryView from "../view/events-history.js";
 import EventDayView from "../view/event-day.js";
-import EventView from "../view/event.js";
-import EventEditView from "../view/event-edit.js";
+
+import EventPresenter from "./event.js";
 
 import {getTripDays, filterEventsByDays} from '../utils/event.js';
-import {render, replace} from '../utils/render.js';
-import {RenderPosition, KeyCode} from '../const.js';
+import {render, remove} from '../utils/render.js';
+import {RenderPosition} from '../const.js';
 import {sortTime, sortPrice} from "../utils/event.js";
+import {updateItem} from "../utils/common.js";
 import {SortType} from "../const.js";
 
 export default class Trip {
   constructor(tripContainer) {
     this._tripContainer = tripContainer;
+    this._currentSortType = SortType.DEFAULT;
+    this._eventPresenter = {};
+    this._tripDayNodes = [];
+    this.dayNode = null;
 
     this._sortComponent = new SortView();
     this._noEventComponent = new NoEventView();
     this._EventsHistoryComponent = new EventsHistoryView();
 
+    this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(tripEvents) {
+  init(tripEvents, tripOffers, tripDestinations) {
+    this._tripOffers = tripOffers;
+    this._tripDestinations = tripDestinations;
+
     this._tripEvents = tripEvents.slice();
     this._sourcedTripEvents = tripEvents.slice();
 
     this._tripDays = getTripDays(this._tripEvents);
 
     this._renderTrip();
+  }
+
+  _handleModeChange() {
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => presenter.resetView());
   }
 
   _sortEvents(sortType) {
@@ -49,6 +65,12 @@ export default class Trip {
     this._currentSortType = sortType;
   }
 
+  _handleEventChange(updatedEvent) {
+    this._tripEvents = updateItem(this._tripEvents, updatedEvent);
+    this._sourcedTripEvents = updateItem(this._sourcedTripEvents, updatedEvent);
+    this._eventPresenter[updatedEvent.id].init(updatedEvent, this.dayNode, this._tripOffers, this._tripDestinations);
+  }
+
   _handleSortTypeChange(sortType) {
     if (this._currentSortType === sortType) {
       return;
@@ -60,7 +82,62 @@ export default class Trip {
   }
 
   _clearEventsList() {
-    this._EventsHistoryComponent.getElement().innerHTML = ``;
+    Object
+      .values(this._eventPresenter)
+      .forEach((presenter) => {
+        presenter.destroy();
+      });
+
+    this._eventPresenter = {};
+    this._tripDayNodes = [];
+    remove(this._EventsHistoryComponent);
+  }
+
+  _createEventNode(event, dayNode) {
+    const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange, this._handleModeChange);
+    eventPresenter.init(event, dayNode, this._tripOffers, this._tripDestinations);
+
+    this._eventPresenter[event.id] = eventPresenter;
+  }
+
+  _createDaysNode() {
+    const tripDaysNode = this._EventsHistoryComponent.getElement();
+
+    if (this._tripDays) {
+
+      this._tripDays.forEach((day, index) => {
+        const eventDay = new EventDayView(day, index + 1);
+        this._tripDayNodes.push(eventDay.getDayContainer());
+
+        tripDaysNode.appendChild(eventDay.getElement());
+      });
+    } else {
+      const eventDay = new EventDayView(this._tripDays);
+      this._tripDayNodes.push(eventDay.getDayContainer());
+
+      tripDaysNode.appendChild(eventDay.getElement());
+    }
+
+    return tripDaysNode;
+  }
+
+  _createEventsListNode() {
+    const eventsListNode = this._createDaysNode();
+
+    this._tripDayNodes.forEach((dayNode) => {
+
+      this.dayNode = dayNode;
+
+      const filteredEventsByDay = dayNode.dataset.day ?
+        filterEventsByDays(this._tripEvents, dayNode.dataset.day) :
+        this._tripEvents;
+
+      filteredEventsByDay.forEach((event) => {
+        this._createEventNode(event, this.dayNode);
+      });
+    });
+
+    return eventsListNode;
   }
 
   _renderSort() {
@@ -68,82 +145,8 @@ export default class Trip {
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
-  _addEventHandlers(eventContainer, eventComponent, eventEditComponent) {
-    const replaceCardToForm = () => {
-      replace(eventContainer, eventEditComponent, eventComponent);
-    };
-
-    const replaceFormToCard = () => {
-      replace(eventContainer, eventComponent, eventEditComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.keyCode === KeyCode.ESCAPE) {
-        evt.preventDefault();
-        replaceFormToCard();
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
-
-    eventComponent.setEditClickHandler(() => {
-      replaceCardToForm();
-      document.addEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormSubmitHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-
-    eventEditComponent.setFormResetHandler(() => {
-      replaceFormToCard();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    });
-  }
-
-  _createEventNode(event, dayNode) {
-    const eventComponent = new EventView(event);
-    const eventEditComponent = new EventEditView(event);
-
-    const eventNode = dayNode.appendChild(eventComponent.getElement());
-
-    this._addEventHandlers(dayNode, eventComponent, eventEditComponent);
-
-    return eventNode;
-  }
-
-  _createEventsByDayNode() {
-    const eventsNode = this._createDaysNode();
-
-    eventsNode.querySelectorAll(`.trip-events__list`).forEach((dayNode) => {
-      const filteredEventsByDay = dayNode.dataset.day ?
-        filterEventsByDays(this._tripEvents, dayNode.dataset.day) :
-        this._tripEvents;
-
-      filteredEventsByDay.forEach((event) => {
-        this._createEventNode(event, dayNode);
-      });
-    });
-
-    return eventsNode;
-  }
-
-  _createDaysNode() {
-    const tripDaysNode = this._EventsHistoryComponent.getElement();
-
-    if (this._tripDays) {
-      this._tripDays.forEach((day, index) => {
-        tripDaysNode.appendChild(new EventDayView(day, index + 1).getElement());
-      });
-    } else {
-      tripDaysNode.appendChild(new EventDayView(this._tripDays).getElement());
-    }
-
-    return tripDaysNode;
-  }
-
   _renderEvents() {
-    render(this._tripContainer, this._createEventsByDayNode(), RenderPosition.BEFORE_END);
+    render(this._tripContainer, this._createEventsListNode(), RenderPosition.BEFORE_END);
   }
 
   _renderNoEvents() {
