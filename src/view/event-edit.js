@@ -3,6 +3,9 @@ import {EVENT_TYPE} from '../const.js';
 import {formatDateTime, generateId} from '../utils/common.js';
 import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination} from '../utils/event.js';
 
+import flatpickr from "flatpickr";
+import "../../node_modules/flatpickr/dist/flatpickr.min.css";
+
 const BLANK_EVENT = {
   id: generateId(),
   type: `bus`,
@@ -105,6 +108,7 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations) => {
   const {id, type, destination, offers, price, dateRange, isFavorite} = data;
 
   const typeWithLabel = formatEventType(type);
+
   const startDateTime = formatDateTime(dateRange[0]);
   const endDateTime = formatDateTime(dateRange[1]);
 
@@ -126,15 +130,15 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations) => {
               </div>
 
               <div class="event__field-group  event__field-group--time">
-                <label class="visually-hidden" for="event-start-time-1">
+                <label class="visually-hidden" for="event-start-time-${id}">
                   From
                 </label>
-                <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startDateTime}">
+                <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value="${startDateTime}">
                 &mdash;
-                <label class="visually-hidden" for="event-end-time-1">
+                <label class="visually-hidden" for="event-end-time-${id}">
                   To
                 </label>
-                <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endDateTime}">
+                <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value="${endDateTime}">
               </div>
 
               <div class="event__field-group  event__field-group--price">
@@ -202,7 +206,10 @@ const createOffersTemplate = (offers, dataOffers, type) => {
 export default class EventEdit extends SmartView {
   constructor(event = BLANK_EVENT, offers, destinations) {
     super();
-    this._data = EventEdit.parseEventToData(event); // Static method call
+    this._data = EventEdit.parseEventToData(event);
+
+    this._startDatepicker = null;
+    this._endDatepicker = null;
 
     this._offers = offers;
     this._destinations = destinations;
@@ -213,6 +220,9 @@ export default class EventEdit extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._changeTypeInputHandler = this._changeTypeInputHandler.bind(this);
     this._changeDestinationInputHandler = this._changeDestinationInputHandler.bind(this);
+
+    this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
+    this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -236,6 +246,60 @@ export default class EventEdit extends SmartView {
       });
 
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._changeDestinationInputHandler);
+
+    this._setStartDatepicker();
+    this._setEndDatepicker();
+  }
+
+  _setDatepicker(datepicker, selector, dataDatepicker, handler, isMinDateEnable) {
+    if (datepicker) {
+      datepicker.destroy();
+      datepicker = null;
+    }
+
+    if (dataDatepicker) {
+      datepicker = flatpickr(
+          this.getElement().querySelector(selector),
+          {
+            dateFormat: `d/m/y H:i`,
+            defaultDate: dataDatepicker,
+            enableTime: true,
+            minDate: isMinDateEnable ? this._data.dateRange[0] : ``,
+            onChange: handler
+          }
+      );
+    }
+  }
+
+  _setStartDatepicker() {
+    this._setDatepicker(
+        this._startDatepicker,
+        `.event__input--time[name = event-start-time]`,
+        this._data.dateRange[0],
+        this._startDateChangeHandler
+    );
+  }
+
+  _setEndDatepicker() {
+    this._setDatepicker(
+        this._endDatepicker,
+        `.event__input--time[name = event-end-time]`,
+        this._data.dateRange[1],
+        this._endDateChangeHandler,
+        true
+    );
+  }
+
+  _startDateChangeHandler([userDate]) {
+    this.updateData({
+      dateRange: [userDate, this._data.dateRange[1]]
+    });
+  }
+
+  _endDateChangeHandler([userDate]) {
+    this.updateData({
+      dateRange: [this._data.dateRange[0], userDate]
+    });
   }
 
   _formSubmitHandler(evt) {
