@@ -10,7 +10,7 @@ export default class Events extends Observer {
     this._events = events.slice();
   }
 
-  getOffers() {
+  getEvents() {
     return this._events;
   }
 }

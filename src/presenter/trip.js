@@ -18,7 +18,7 @@ export default class Trip {
     this._currentSortType = SortType.DEFAULT;
     this._eventPresenter = {};
     this._tripDayNodes = [];
-    this.dayNode = null;
+    this._dayNode = null;
 
     this._sortComponent = new SortView();
     this._noEventComponent = new NoEventView();
@@ -31,30 +31,37 @@ export default class Trip {
     this._eventsModel = eventsModel;
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
+
+    this._tripDays = this._getTripDays(this._currentSortType);
+  }
+
+  init() {
+    this._renderTrip();
+  }
+
+  _getTripDays(currentSortType) {
+    return currentSortType === SortType.DEFAULT ? getTripDays(this._getEvents()) : undefined;
   }
 
   _getEvents() {
-    return this.eventsModel.getEvents();
+    this._events = this._eventsModel.getEvents().slice();
+
+    switch (this._currentSortType) {
+      case SortType.PRICE:
+        return this._events.sort(sortPrice);
+      case SortType.TIME:
+        return this._events.sort(sortTime);
+      default:
+        return this._events;
+    }
   }
 
   _getOffers() {
-    return this.offersModel.getOffers();
+    return this._offersModel.getOffers();
   }
 
   _getDestinations() {
-    return this.destinationsModel.getDestinations();
-  }
-
-  init(tripEvents, tripOffers, tripDestinations) {
-    this._tripOffers = tripOffers;
-    this._tripDestinations = tripDestinations;
-
-    this._tripEvents = tripEvents.slice();
-    this._sourcedTripEvents = tripEvents.slice();
-
-    this._tripDays = getTripDays(this._tripEvents);
-
-    this._renderTrip();
+    return this._destinationsModel.getDestinations();
   }
 
   _handleModeChange() {
@@ -63,28 +70,9 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _sortEvents(sortType) {
-    switch (sortType) {
-      case SortType.TIME:
-        this._tripDays = undefined;
-        this._tripEvents.sort(sortTime);
-        break;
-      case SortType.PRICE:
-        this._tripDays = undefined;
-        this._tripEvents.sort(sortPrice);
-        break;
-      default:
-        this._tripDays = getTripDays(this._tripEvents);
-        this._tripEvents = this._sourcedTripEvents.slice();
-    }
-
-    this._currentSortType = sortType;
-  }
-
   _handleEventChange(updatedEvent) {
-    this._tripEvents = updateItem(this._tripEvents, updatedEvent);
-    this._sourcedTripEvents = updateItem(this._sourcedTripEvents, updatedEvent);
-    this._eventPresenter[updatedEvent.id].init(updatedEvent, this.dayNode, this._tripOffers, this._tripDestinations);
+    // Здесь будем вызывать обновление модели
+    this._eventPresenter[updatedEvent.id].init(updatedEvent, this._dayNode, this._getOffers(), this._getDestinations());
   }
 
   _handleSortTypeChange(sortType) {
@@ -92,7 +80,9 @@ export default class Trip {
       return;
     }
 
-    this._sortEvents(sortType);
+    this._currentSortType = sortType;
+    this._tripDays = this._getTripDays(this._currentSortType);
+
     this._clearEventsList();
     this._renderEvents();
   }
@@ -111,14 +101,13 @@ export default class Trip {
 
   _createEventNode(event, dayNode) {
     const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange, this._handleModeChange);
-    eventPresenter.init(event, dayNode, this._tripOffers, this._tripDestinations);
+    eventPresenter.init(event, dayNode, this._getOffers(), this._getDestinations());
 
     this._eventPresenter[event.id] = eventPresenter;
   }
 
   _createDaysNode() {
     const tripDaysNode = this._EventsHistoryComponent.getElement();
-
     if (this._tripDays) {
 
       this._tripDays.forEach((day, index) => {
@@ -142,14 +131,14 @@ export default class Trip {
 
     this._tripDayNodes.forEach((dayNode) => {
 
-      this.dayNode = dayNode;
+      this._dayNode = dayNode;
 
       const filteredEventsByDay = dayNode.dataset.day ?
-        filterEventsByDays(this._tripEvents, dayNode.dataset.day) :
-        this._tripEvents;
+        filterEventsByDays(this._getEvents(), dayNode.dataset.day) :
+        this._getEvents();
 
       filteredEventsByDay.forEach((event) => {
-        this._createEventNode(event, this.dayNode);
+        this._createEventNode(event, this._dayNode);
       });
     });
 
@@ -170,7 +159,7 @@ export default class Trip {
   }
 
   _renderTrip() {
-    if (this._tripEvents.length) {
+    if (this._getEvents().length) {
       this._renderSort();
       this._renderEvents();
     } else {

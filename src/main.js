@@ -37,4 +37,4 @@ render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
 render(titleFilter, new FilterView(), RenderPosition.AFTER_END);
 
 const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel);
-tripPresenter.init(events, offers, destinations);
+tripPresenter.init();
