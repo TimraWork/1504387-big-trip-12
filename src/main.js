@@ -6,6 +6,10 @@ import {generateDestinations} from './mock/destinations.js';
 
 import TripPresenter from "./presenter/trip.js";
 
+import EventsModel from "./model/events.js";
+import OffersModel from "./model/offers.js";
+import DestinationsModel from "./model/destinations.js";
+
 import MenuView from "./view/menu.js";
 import FilterView from "./view/filter.js";
 import InfoView from "./view/info.js";
@@ -19,9 +23,18 @@ const events = new Array(EVENT_COUNT).fill().map(generateEvent);
 const offers = generateOffers();
 const destinations = generateDestinations();
 
+const eventsModel = new EventsModel();
+eventsModel.setEvents(events);
+
+const offersModel = new OffersModel();
+offersModel.setOffers(offers);
+
+const destinationsModel = new DestinationsModel();
+destinationsModel.setDestinations(destinations);
+
 render(infoContainer, new InfoView(events, offers), RenderPosition.AFTER_BEGIN);
 render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
 render(titleFilter, new FilterView(), RenderPosition.AFTER_END);
 
-const tripPresenter = new TripPresenter(eventsContainer);
+const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel);
 tripPresenter.init(events, offers, destinations);

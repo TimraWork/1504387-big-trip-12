@@ -13,7 +13,7 @@ import {updateItem} from "../utils/common.js";
 import {SortType} from "../const.js";
 
 export default class Trip {
-  constructor(tripContainer) {
+  constructor(tripContainer, eventsModel, offersModel, destinationsModel) {
     this._tripContainer = tripContainer;
     this._currentSortType = SortType.DEFAULT;
     this._eventPresenter = {};
@@ -27,6 +27,22 @@ export default class Trip {
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._eventsModel = eventsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+  }
+
+  _getEvents() {
+    return this.eventsModel.getEvents();
+  }
+
+  _getOffers() {
+    return this.offersModel.getOffers();
+  }
+
+  _getDestinations() {
+    return this.destinationsModel.getDestinations();
   }
 
   init(tripEvents, tripOffers, tripDestinations) {
