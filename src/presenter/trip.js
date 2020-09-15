@@ -24,8 +24,9 @@ export default class Trip {
     this._noEventComponent = new NoEventView();
     this._EventsHistoryComponent = new EventsHistoryView();
 
-    this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._eventsModel = eventsModel;
@@ -33,6 +34,8 @@ export default class Trip {
     this._destinationsModel = destinationsModel;
 
     this._tripDays = this._getTripDays(this._currentSortType);
+
+    this._eventsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -70,9 +73,20 @@ export default class Trip {
       .forEach((presenter) => presenter.resetView());
   }
 
-  _handleEventChange(updatedEvent) {
+  _handleViewAction(actionType, updateType, update) {
     // Здесь будем вызывать обновление модели
-    this._eventPresenter[updatedEvent.id].init(updatedEvent, this._dayNode, this._getOffers(), this._getDestinations());
+    console.log(actionType, updateType, update);
+    // actionType - действие пользователя, нужно чтобы понять, какой метод модели вызвать
+    // updateType - тип изменений, нужно чтобы понять, что после нужно обновить
+    // update - обновленные данные
+  }
+
+  _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
+    // В зависимости от типа изменений решаем, что делать:
+    // - обновить часть списка (например, когда поменялось описание)
+    // - обновить список (например, когда задача ушла в архив)
+    // - обновить всю доску (например, при переключении фильтра)
   }
 
   _handleSortTypeChange(sortType) {
@@ -100,7 +114,7 @@ export default class Trip {
   }
 
   _createEventNode(event, dayNode) {
-    const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleEventChange, this._handleModeChange);
+    const eventPresenter = new EventPresenter(this._EventsHistoryComponent, this._handleViewAction, this._handleModeChange);
     eventPresenter.init(event, dayNode, this._getOffers(), this._getDestinations());
 
     this._eventPresenter[event.id] = eventPresenter;
