@@ -9,8 +9,8 @@ const Mode = {
 };
 
 export default class Event {
-  constructor(eventListContainer, changeData, changeMode) {
-    this._eventListContainer = eventListContainer;
+  constructor(dayNode, changeData, changeMode) {
+    this._dayNode = dayNode;
     this._changeData = changeData;
     this._changeMode = changeMode;
 
@@ -26,9 +26,8 @@ export default class Event {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(event, dayNode, offers, destinations) {
+  init(event, offers, destinations) {
     this._event = event;
-    this._dayNode = dayNode;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
@@ -102,7 +101,7 @@ export default class Event {
 
   _handleFormSubmit(event) {
     this._changeData(
-        UserAction.UPDATE_TASK,
+        UserAction.UPDATE_EVENT,
         UpdateType.MINOR,
         event
     );
@@ -115,8 +114,8 @@ export default class Event {
 
   _handleFavoriteClick() {
     this._changeData(
-        UserAction.UPDATE_TASK,
-        UpdateType.MINOR,
+        UserAction.UPDATE_EVENT,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._event,
