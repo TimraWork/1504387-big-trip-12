@@ -762,6 +762,8 @@ main {
      -moz-appearance: none;
           appearance: none;
   border: none; }
+  .event__input:focus:required:invalid {
+    background-color: pink; }
   .event__input--destination {
     width: 150px; }
     .event__input--destination::-webkit-calendar-picker-indicator {

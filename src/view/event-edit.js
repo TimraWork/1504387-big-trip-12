@@ -1,7 +1,7 @@
 import SmartView from "./smart.js";
 import {EVENT_TYPE} from '../const.js';
 import {formatDateTime, generateId} from '../utils/common.js';
-import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination} from '../utils/event.js';
+import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination, validatePrice} from '../utils/event.js';
 
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
@@ -142,11 +142,11 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations) => {
               </div>
 
               <div class="event__field-group  event__field-group--price">
-                <label class="event__label" for="event-price-1">
+                <label class="event__label" for="event-price-${id}">
                   <span class="visually-hidden">Price</span>
                   &euro;
                 </label>
-                <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+                <input required type="number" min="1" class="event__input  event__input--price" id="event-price-${id}" type="text" name="event-price" value="${price}">
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -222,6 +222,7 @@ export default class EventEdit extends SmartView {
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
     this._changeTypeInputHandler = this._changeTypeInputHandler.bind(this);
     this._changeDestinationInputHandler = this._changeDestinationInputHandler.bind(this);
+    this._changePriceInputHandler = this._changePriceInputHandler.bind(this);
 
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
@@ -249,6 +250,7 @@ export default class EventEdit extends SmartView {
       });
 
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._changeDestinationInputHandler);
+    this.getElement().querySelector(`.event__input--price`).addEventListener(`input`, this._changePriceInputHandler);
 
     this._setStartDatepicker();
     this._setEndDatepicker();
@@ -345,6 +347,16 @@ export default class EventEdit extends SmartView {
     };
 
     validateDestination(evt.target, this.getElement(), this._destinations, callback);
+  }
+
+  _changePriceInputHandler(evt) {
+    const callback = () => {
+      this.updateData({
+        price: evt.target.value
+      }, true);
+    };
+
+    validatePrice(evt.target, this.getElement(), callback);
   }
 
   setFormSubmitHandler(callback) {

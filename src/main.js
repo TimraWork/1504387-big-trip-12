@@ -9,6 +9,7 @@ import TripPresenter from "./presenter/trip.js";
 import EventsModel from "./model/events.js";
 import OffersModel from "./model/offers.js";
 import DestinationsModel from "./model/destinations.js";
+import FilterModel from "./model/filter.js";
 
 import MenuView from "./view/menu.js";
 import FilterView from "./view/filter.js";
@@ -28,6 +29,8 @@ eventsModel.setEvents(events);
 
 const offersModel = new OffersModel();
 offersModel.setOffers(offers);
+
+const filterModel = new FilterModel();
 
 const destinationsModel = new DestinationsModel();
 destinationsModel.setDestinations(destinations);

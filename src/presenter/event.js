@@ -1,6 +1,7 @@
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
 import {replace, remove} from '../utils/render.js';
+import {isDatesEqual} from '../utils/event.js';
 import {KeyCode, UserAction, UpdateType} from '../const.js';
 
 const Mode = {
@@ -101,11 +102,13 @@ export default class Event {
     this._replaceFormToCard();
   }
 
-  _handleFormSubmit(event) {
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._event.dateRange[0], update.dateRange[0]) ||
+                          !isDatesEqual(this._event.dateRange[1], update.dateRange[1]);
     this._changeData(
         UserAction.UPDATE_EVENT,
-        UpdateType.MINOR,
-        event
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update
     );
     this._replaceFormToCard();
   }
