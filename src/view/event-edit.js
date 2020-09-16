@@ -150,7 +150,7 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations) => {
               </div>
 
               <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-              <button class="event__reset-btn" type="reset">Cancel</button>
+              <button class="event__reset-btn" type="reset">Delete</button>
 
               ${favoriteButtonTemplate}
 
@@ -215,6 +215,8 @@ export default class EventEdit extends SmartView {
     this._destinations = destinations;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+
     this._formResetHandler = this._formResetHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);
@@ -236,6 +238,7 @@ export default class EventEdit extends SmartView {
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setFormResetHandler(this._callback.formReset);
     this.setFormCloseClickHandler(this._callback.closeClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setInnerHandlers() {
@@ -335,7 +338,6 @@ export default class EventEdit extends SmartView {
   }
 
   _changeDestinationInputHandler(evt) {
-
     const callback = () => {
       this.updateData({
         destination: evt.target.value
@@ -360,6 +362,16 @@ export default class EventEdit extends SmartView {
     this.getElement().addEventListener(`reset`, this._formResetHandler);
   }
 
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector(`.event__reset-btn`).addEventListener(`click`, this._formDeleteClickHandler);
+  }
+
   setFavoriteClickHandler(callback) {
     this._callback.favoriteClick = callback;
     this.getElement().querySelector(`.event__favorite-checkbox`).addEventListener(`click`, this._favoriteClickHandler);
@@ -367,6 +379,15 @@ export default class EventEdit extends SmartView {
 
   reset(event) {
     this.updateData(EventEdit.parseEventToData(event));
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._datepicker) {
+      this._datepicker.destroy();
+      this._datepicker = null;
+    }
   }
 
   static parseEventToData(event) {

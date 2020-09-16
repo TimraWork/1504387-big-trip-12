@@ -121,6 +121,7 @@ export default class Trip {
       .forEach((presenter) => presenter.destroy());
     this._eventPresenter = {};
     this._tripDayNodes = [];
+    this._tripDays = this._getTripDays(this._currentSortType);
 
     remove(this._EventsHistoryComponent);
     remove(this._sortComponent);

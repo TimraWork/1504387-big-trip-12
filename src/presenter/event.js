@@ -24,6 +24,7 @@ export default class Event {
     this._handleResetClick = this._handleResetClick.bind(this);
     this._handleCloseClick = this._handleCloseClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event, offers, destinations) {
@@ -40,6 +41,7 @@ export default class Event {
     this._eventEditComponent.setFormResetHandler(this._handleResetClick);
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormCloseClickHandler(this._handleCloseClick);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
@@ -126,4 +128,11 @@ export default class Event {
     );
   }
 
+  _handleDeleteClick(event) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
+        UpdateType.MINOR,
+        event
+    );
+  }
 }
