@@ -267,6 +267,11 @@ main {
   opacity: 1;
   cursor: default; }
 
+.trip-filters__filter-input:disabled + .trip-filters__filter-label {
+  opacity: 0.2;
+  cursor: default;
+}
+
 .trip-search {
   -ms-flex-positive: 1;
       flex-grow: 1;
@@ -762,7 +767,7 @@ main {
      -moz-appearance: none;
           appearance: none;
   border: none; }
-  .event__input:focus:required:invalid {
+  .event__input:focus:required:invalid, .event__input.invalid:focus:required {
     background-color: pink; }
   .event__input--destination {
     width: 150px; }

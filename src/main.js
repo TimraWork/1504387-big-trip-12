@@ -5,6 +5,7 @@ import {generateOffers} from './mock/offers.js';
 import {generateDestinations} from './mock/destinations.js';
 
 import TripPresenter from "./presenter/trip.js";
+import FilterPresenter from "./presenter/filter.js";
 
 import EventsModel from "./model/events.js";
 import OffersModel from "./model/offers.js";
@@ -12,8 +13,8 @@ import DestinationsModel from "./model/destinations.js";
 import FilterModel from "./model/filter.js";
 
 import MenuView from "./view/menu.js";
-import FilterView from "./view/filter.js";
 import InfoView from "./view/info.js";
+import EventNewButtonView from "./view/event-new-button.js";
 
 const infoContainer = document.querySelector(`.trip-main`);
 const eventsContainer = document.querySelector(`.trip-events`);
@@ -25,19 +26,27 @@ const offers = generateOffers();
 const destinations = generateDestinations();
 
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
-
 const offersModel = new OffersModel();
-offersModel.setOffers(offers);
-
+const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
-const destinationsModel = new DestinationsModel();
+eventsModel.setEvents(events);
+offersModel.setOffers(offers);
 destinationsModel.setDestinations(destinations);
 
-render(infoContainer, new InfoView(events, offers), RenderPosition.AFTER_BEGIN);
-render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
-render(titleFilter, new FilterView(), RenderPosition.AFTER_END);
+const newEventButtonComponent = new EventNewButtonView();
 
-const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel);
+render(infoContainer, new InfoView(events, offers), RenderPosition.AFTER_BEGIN);
+render(infoContainer, newEventButtonComponent, RenderPosition.BEFORE_END);
+render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
+
+const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel);
+const filterPresenter = new FilterPresenter(titleFilter, filterModel, eventsModel);
+
+filterPresenter.init();
 tripPresenter.init();
+
+document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+  tripPresenter.createEvent();
+});

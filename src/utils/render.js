@@ -13,7 +13,6 @@ const getNodeElement = (element) => {
 };
 
 export const render = (container, child, place) => {
-
   container = getNodeElement(container);
   child = getNodeElement(child);
 
@@ -34,7 +33,6 @@ export const render = (container, child, place) => {
 };
 
 export const replace = (newChild, oldChild) => {
-
   oldChild = getNodeElement(oldChild);
   newChild = getNodeElement(newChild);
 

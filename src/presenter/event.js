@@ -35,7 +35,7 @@ export default class Event {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(this._event, offers);
-    this._eventEditComponent = new EventEditView(this._event, offers, destinations);
+    this._eventEditComponent = new EventEditView(offers, destinations, this._event);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);

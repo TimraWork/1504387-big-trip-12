@@ -145,3 +145,14 @@ export const isDatesEqual = (dateA, dateB) => {
 
   return moment(dateA).isSame(dateB, `day`);
 };
+
+export const validateDate = (dateRange, form, input) => {
+  input.setCustomValidity(``);
+  if (moment(dateRange[0]).isAfter(dateRange[1])) {
+    input.setCustomValidity(`Please, select the correct date`);
+
+  } else {
+    input.setCustomValidity(``);
+  }
+  form.reportValidity();
+};
