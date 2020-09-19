@@ -1,5 +1,6 @@
 import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER, OFFERS_DATA} from '../const.js';
 import {formatMonthDate, formatDate} from './common.js';
+import moment from "moment";
 
 export const capitalizeFirstLetter = (string) => {
   return string[0].toUpperCase() + string.slice(1);
@@ -61,12 +62,17 @@ export const getEventDuration = (dateRange) => {
   return `${diffDay} ${diffHour} ${diffMinutes}`;
 };
 
+const getTimeInterval = (event) => {
+  const [d1, d2] = event.dateRange;
+  return new Date(d1 - d2);
+};
+
 export const sortTime = (eventA, eventB) => {
-  return eventA.dateRange[0].getTime() - eventB.dateRange[0].getTime();
+  return getTimeInterval(eventA) - getTimeInterval(eventB);
 };
 
 export const sortPrice = (eventA, eventB) => {
-  return eventA.price - eventB.price;
+  return eventB.price - eventA.price;
 };
 
 export const getOffersByType = (type) => {
@@ -118,4 +124,35 @@ export const validateDestination = (destinationInput, eventEditForm, destination
     callback();
   }
   eventEditForm.reportValidity();
+};
+
+export const validatePrice = (priceInput, eventEditForm, callback) => {
+  priceInput.setCustomValidity(``);
+  if (priceInput.validity.valueMissing || !priceInput.checkValidity()) {
+    priceInput.setCustomValidity(`Please, write the positive integer number`);
+  } else {
+    priceInput.setCustomValidity(``);
+
+    callback();
+  }
+  eventEditForm.reportValidity();
+};
+
+export const isDatesEqual = (dateA, dateB) => {
+  if (dateA === null && dateB === null) {
+    return true;
+  }
+
+  return moment(dateA).isSame(dateB, `day`);
+};
+
+export const validateDate = (dateRange, form, input) => {
+  input.setCustomValidity(``);
+  if (moment(dateRange[0]).isAfter(dateRange[1])) {
+    input.setCustomValidity(`Please, select the correct date`);
+
+  } else {
+    input.setCustomValidity(``);
+  }
+  form.reportValidity();
 };

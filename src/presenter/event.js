@@ -1,7 +1,8 @@
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
 import {replace, remove} from '../utils/render.js';
-import {KeyCode} from '../const.js';
+import {isDatesEqual} from '../utils/event.js';
+import {KeyCode, UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: `DEFAULT`,
@@ -9,8 +10,8 @@ const Mode = {
 };
 
 export default class Event {
-  constructor(eventListContainer, changeData, changeMode) {
-    this._eventListContainer = eventListContainer;
+  constructor(dayNode, changeData, changeMode) {
+    this._dayNode = dayNode;
     this._changeData = changeData;
     this._changeMode = changeMode;
 
@@ -24,23 +25,24 @@ export default class Event {
     this._handleResetClick = this._handleResetClick.bind(this);
     this._handleCloseClick = this._handleCloseClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
-  init(event, dayNode, offers, destinations) {
+  init(event, offers, destinations) {
     this._event = event;
-    this._dayNode = dayNode;
 
     const prevEventComponent = this._eventComponent;
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(this._event, offers);
-    this._eventEditComponent = new EventEditView(this._event, offers, destinations);
+    this._eventEditComponent = new EventEditView(offers, destinations, this._event);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setFormResetHandler(this._handleResetClick);
     this._eventEditComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setFormCloseClickHandler(this._handleCloseClick);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       this._eventNode = this._dayNode.appendChild(this._eventComponent.getElement());
@@ -100,8 +102,14 @@ export default class Event {
     this._replaceFormToCard();
   }
 
-  _handleFormSubmit(event) {
-    this._changeData(event);
+  _handleFormSubmit(update) {
+    const isMinorUpdate = !isDatesEqual(this._event.dateRange[0], update.dateRange[0]) ||
+                          !isDatesEqual(this._event.dateRange[1], update.dateRange[1]);
+    this._changeData(
+        UserAction.UPDATE_EVENT,
+        isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+        update
+    );
     this._replaceFormToCard();
   }
 
@@ -111,6 +119,8 @@ export default class Event {
 
   _handleFavoriteClick() {
     this._changeData(
+        UserAction.UPDATE_EVENT,
+        UpdateType.PATCH,
         Object.assign(
             {},
             this._event,
@@ -121,4 +131,11 @@ export default class Event {
     );
   }
 
+  _handleDeleteClick(event) {
+    this._changeData(
+        UserAction.DELETE_EVENT,
+        UpdateType.MINOR,
+        event
+    );
+  }
 }

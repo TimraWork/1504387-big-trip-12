@@ -13,7 +13,6 @@ const getNodeElement = (element) => {
 };
 
 export const render = (container, child, place) => {
-
   container = getNodeElement(container);
   child = getNodeElement(child);
 
@@ -34,7 +33,6 @@ export const render = (container, child, place) => {
 };
 
 export const replace = (newChild, oldChild) => {
-
   oldChild = getNodeElement(oldChild);
   newChild = getNodeElement(newChild);
 
@@ -48,6 +46,10 @@ export const replace = (newChild, oldChild) => {
 };
 
 export const remove = (component) => {
+  if (component === null) {
+    return;
+  }
+
   if (!(component instanceof Abstract)) {
     throw new Error(`Can remove only components`);
   }

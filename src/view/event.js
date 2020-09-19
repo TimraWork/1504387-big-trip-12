@@ -28,7 +28,6 @@ const createOffersTemplate = (offers) => {
 };
 
 const createEventTemplate = (event, dataOffers) => {
-
   const {type, destination, dateRange, price, offers} = event;
 
   const typeWithLabel = formatEventType(type);

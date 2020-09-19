@@ -36,5 +36,4 @@ export default class EventDay extends AbstractView {
   getDayContainer() {
     return this.getElement().querySelector(`.trip-events__list`);
   }
-
 }
