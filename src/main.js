@@ -6,6 +6,7 @@ import {generateDestinations} from './mock/destinations.js';
 
 import TripPresenter from "./presenter/trip.js";
 import FilterPresenter from "./presenter/filter.js";
+import InfoPresenter from './presenter/info.js';
 
 import EventsModel from "./model/events.js";
 import OffersModel from "./model/offers.js";
@@ -13,7 +14,6 @@ import DestinationsModel from "./model/destinations.js";
 import FilterModel from "./model/filter.js";
 
 import MenuView from "./view/menu.js";
-import InfoView from "./view/info.js";
 import EventNewButtonView from "./view/event-new-button.js";
 
 const infoContainer = document.querySelector(`.trip-main`);
@@ -36,15 +36,16 @@ destinationsModel.setDestinations(destinations);
 
 const newEventButtonComponent = new EventNewButtonView();
 
-render(infoContainer, new InfoView(events, offers), RenderPosition.AFTER_BEGIN);
 render(infoContainer, newEventButtonComponent, RenderPosition.BEFORE_END);
 render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
 
 const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel);
 const filterPresenter = new FilterPresenter(titleFilter, filterModel, eventsModel);
+const infoPresenter = new InfoPresenter(infoContainer, eventsModel, offersModel);
 
-filterPresenter.init();
 tripPresenter.init();
+filterPresenter.init();
+infoPresenter.init();
 
 document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
   evt.preventDefault();

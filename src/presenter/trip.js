@@ -41,7 +41,6 @@ export default class Trip {
     this._filterModel.addObserver(this._handleModelEvent);
 
     this._eventNewPresenter = new EventNewPresenter(this._tripContainer, this._handleViewAction);
-
   }
 
   init() {
@@ -130,15 +129,13 @@ export default class Trip {
   }
 
   _clearTrip({resetSortType = false} = {}) {
+    this._eventNewPresenter.destroy();
     Object
       .values(this._eventPresenter)
       .forEach((presenter) => presenter.destroy());
+
     this._eventPresenter = {};
     this._tripDayNodes = [];
-
-    if (this._EventNewPresenter) {
-      this._EventNewPresenter.destroy();
-    }
 
     remove(this._EventsHistoryComponent);
     remove(this._sortComponent);
@@ -148,7 +145,6 @@ export default class Trip {
       this._currentSortType = SortType.DEFAULT;
     }
     this._tripDays = this._getTripDays(this._currentSortType);
-
   }
 
   _createEventNode(event, dayNode) {

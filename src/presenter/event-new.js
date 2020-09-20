@@ -1,7 +1,7 @@
 import EventEditView from "../view/event-edit.js";
 import {remove, render} from "../utils/render.js";
 import {generateId} from "../utils/common.js";
-import {UserAction, UpdateType, RenderPosition} from "../const.js";
+import {UserAction, UpdateType, RenderPosition, KeyCode} from "../const.js";
 
 export default class EventNew {
   constructor(eventListContainer, changeData) {
@@ -42,10 +42,11 @@ export default class EventNew {
   }
 
   _handleFormSubmit(event) {
+    const newId = generateId();
     this._changeData(
         UserAction.ADD_EVENT,
         UpdateType.MINOR,
-        Object.assign({id: generateId()}, event)
+        Object.assign({id: newId}, event)
     );
     this.destroy();
   }
@@ -55,7 +56,7 @@ export default class EventNew {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
+    if (evt.keyCode === KeyCode.ESCAPE) {
       evt.preventDefault();
       this.destroy();
     }
