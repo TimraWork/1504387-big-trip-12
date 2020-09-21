@@ -1,7 +1,7 @@
 import InfoView from '../view/info.js';
+
 import {render, replace, remove} from '../utils/render.js';
 import {RenderPosition} from '../const.js';
-
 
 export default class Info {
   constructor(container, eventsModel, offersModel) {

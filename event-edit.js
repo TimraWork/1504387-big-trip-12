@@ -10,8 +10,8 @@ const BLANK_EVENT = {
   type: EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1],
   dateRange: [new Date(), new Date()],
   offers: [],
-  destination: ``,
-  price: ``,
+  destination: `Amsterdam`,
+  price: `1`,
   isFavorite: false
 };
 
@@ -117,7 +117,7 @@ const createOfferItemTemplate = (id, offer, isChecked) => {
           </div>`;
 };
 
-const createOffersTemplate = (id = 1, offers, dataOffers, type) => {
+const createOffersTemplate = (id, offers, dataOffers, type) => {
   const offersByType = getOffers(dataOffers, type);
   let isChecked = false;
 
@@ -267,8 +267,7 @@ export default class EventEdit extends SmartView {
     this._setEndDatepicker();
   }
 
-  _changeOffersClickHandler(evt) {
-    evt.preventDefault();
+  _changeOffersClickHandler() {
     const offers = [];
 
     this.getElement().querySelectorAll(`.event__offer-checkbox`)

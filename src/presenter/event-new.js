@@ -1,4 +1,6 @@
 import EventEditView from "../view/event-edit.js";
+import EventNewButtonView from "../view/event-new-button.js";
+
 import {remove, render} from "../utils/render.js";
 import {generateId} from "../utils/common.js";
 import {UserAction, UpdateType, RenderPosition, KeyCode} from "../const.js";
@@ -9,6 +11,7 @@ export default class EventNew {
     this._changeData = changeData;
 
     this._eventEditComponent = null;
+    this._eventNewButtonComponent = new EventNewButtonView();
 
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
@@ -27,6 +30,8 @@ export default class EventNew {
 
     render(this._eventListContainer, this._eventEditComponent, RenderPosition.AFTER_BEGIN);
 
+    this._eventNewButtonComponent.setDisabled();
+
     document.addEventListener(`keydown`, this._escKeyDownHandler);
   }
 
@@ -37,6 +42,8 @@ export default class EventNew {
 
     remove(this._eventEditComponent);
     this._eventEditComponent = null;
+
+    this._eventNewButtonComponent.setEnabled();
 
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }

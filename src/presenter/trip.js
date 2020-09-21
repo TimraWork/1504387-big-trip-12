@@ -1,5 +1,6 @@
 import SortView from "../view/sort.js";
 import NoEventView from "../view/no-event.js";
+import EventNewButtonView from "../view/event-new-button.js";
 import EventsHistoryView from "../view/events-history.js";
 import EventDayView from "../view/event-day.js";
 
@@ -23,8 +24,9 @@ export default class Trip {
     this._dayNode = null;
 
     this._sortComponent = new SortView();
+    this._eventNewButtonComponent = new EventNewButtonView();
     this._noEventComponent = new NoEventView();
-    this._EventsHistoryComponent = new EventsHistoryView();
+    this._eventsHistoryComponent = new EventsHistoryView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
@@ -137,7 +139,7 @@ export default class Trip {
     this._eventPresenter = {};
     this._tripDayNodes = [];
 
-    remove(this._EventsHistoryComponent);
+    remove(this._eventsHistoryComponent);
     remove(this._sortComponent);
     remove(this._noEventComponent);
 
@@ -155,7 +157,7 @@ export default class Trip {
   }
 
   _createDaysNode() {
-    const tripDaysNode = this._EventsHistoryComponent.getElement();
+    const tripDaysNode = this._eventsHistoryComponent.getElement();
     if (this._tripDays) {
 
       this._tripDays.forEach((day, index) => {
