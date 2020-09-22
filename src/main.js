@@ -1,7 +1,9 @@
-import {EVENT_COUNT} from './const.js';
+import {EVENT_COUNT, RenderPosition} from './const.js';
 import {generateEvent} from './mock/event.js';
 import {generateOffers} from './mock/offers.js';
 import {generateDestinations} from './mock/destinations.js';
+
+import {render} from "./utils/render";
 
 import TripPresenter from "./presenter/trip.js";
 import MenuPresenter from "./presenter/menu.js";
@@ -35,6 +37,10 @@ const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersMode
 const filterPresenter = new FilterPresenter(titleFilter, filterModel, eventsModel);
 const infoPresenter = new InfoPresenter(infoContainer, eventsModel, offersModel);
 const menuPresenter = new MenuPresenter(infoContainer, titleMenu, tripPresenter);
+
+// import StatisticsView from "./view/statistics.js";
+// const statisticsComponent = new StatisticsView();
+// render(eventsContainer, statisticsComponent, RenderPosition.AFTER_BEGIN);
 
 tripPresenter.init();
 filterPresenter.init();

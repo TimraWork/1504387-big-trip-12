@@ -9,6 +9,8 @@ export default class EventNewButton extends AbstractView {
     super();
 
     this._eventNewClickHandler = this._eventNewClickHandler.bind(this);
+    this._setDisabled = this._setDisabled.bind(this);
+    this._setEnabled = this._setEnabled.bind(this);
   }
 
   getTemplate() {
@@ -25,13 +27,21 @@ export default class EventNewButton extends AbstractView {
     this.getElement().addEventListener(`click`, this._eventNewClickHandler);
   }
 
-  setDisabled() {
-    // this.getElement().disabled = true;
+  _setDisabled() {
+    // this.getElement().setAttribute(`disabled`, `true`);
     document.querySelector(`.trip-main__event-add-btn`).setAttribute(`disabled`, `true`);
   }
 
-  setEnabled() {
-    // this.getElement().removeAttribute(`disabled`);
+  _setEnabled() {
+    // this.getElement().removeAttribute(`disabled`, `true`);
     document.querySelector(`.trip-main__event-add-btn`).removeAttribute(`disabled`);
+  }
+
+  setDisabled() {
+    this._setDisabled();
+  }
+
+  setEnabled() {
+    this._setEnabled();
   }
 }

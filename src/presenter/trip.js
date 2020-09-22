@@ -39,20 +39,36 @@ export default class Trip {
     this._filterModel = filterModel;
     this._tripDays = this._getTripDays(this._currentSortType);
 
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._eventNewPresenter = new EventNewPresenter(this._tripContainer, this._handleViewAction);
   }
 
   init() {
+    this.destroy();
+
     this._renderTrip();
+
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
-  createEvent() {
+  destroy() {
+    this._setDefaultSettings();
+
+    this._clearTrip({resetSortType: true});
+
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
+  }
+
+  createEvent(callback) {
+    this._setDefaultSettings();
+
+    this._eventNewPresenter.init(this._getOffers(), this._getDestinations(), callback);
+  }
+
+  _setDefaultSettings() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.ALL);
-    this._eventNewPresenter.init(this._getOffers(), this._getDestinations());
   }
 
   _getTripDays(currentSortType) {

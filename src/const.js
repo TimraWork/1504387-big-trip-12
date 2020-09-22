@@ -1,4 +1,4 @@
-export const EVENT_COUNT = 20;
+export const EVENT_COUNT = 10;
 export const MAX_OFFERS = 3;
 export const MAX_INFO_CITIES = 3;
 export const TEXT_DIVIDER = ` &mdash; `;
@@ -46,4 +46,8 @@ export const FilterType = {
   ALL: `everything`,
   FUTURE: `future`,
   PAST: `past`,
+};
+export const MenuItem = {
+  TABLE: `Table`,
+  STATS: `Stats`
 };
