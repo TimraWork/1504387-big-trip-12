@@ -8,7 +8,7 @@ export const capitalizeFirstLetter = (string) => {
 
 export const formatEventType = (type) => {
   const labels = EVENT_TYPE.joinLabels;
-  const transfers = EVENT_TYPE.transfers;
+  const transfers = EVENT_TYPE.transfers.map((transfer) => transfer.name);
   const label = transfers.includes(type) ? labels[0] : labels[1];
 
   return `${capitalizeFirstLetter(type)}  ${label}`;

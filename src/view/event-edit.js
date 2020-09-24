@@ -7,7 +7,8 @@ import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
-  type: EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1],
+  // console.log('EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1] = ', EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1]);
+  type: `restaurant`,
   dateRange: [new Date(), new Date()],
   offers: [],
   destination: ``,
@@ -56,6 +57,7 @@ const createEventTypeTemplate = (id, eventType) => {
 
                         ${typeValues
                             .map((typeValue) => {
+                              typeValue = typeValue.name;
                               return `<div class="event__type-item">
                                         <input id="event-type-${typeValue}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeValue}" ${eventType === typeValue ? `checked` : ``}>
                                         <label class="event__type-label  event__type-label--${typeValue}" for="event-type-${typeValue}-${id}">${capitalizeFirstLetter(typeValue)}</label>

@@ -1,4 +1,4 @@
-import SmartView from './smart.js';
+import Abstract from './abstract.js';
 
 const createStatisticsTemplate = () => {
   return `<section class="statistics">
@@ -13,13 +13,31 @@ const createStatisticsTemplate = () => {
             </div>
 
             <div class="statistics__item statistics__item--time-spend">
-              <canvas class="statistics__chart  statistics__chart--time" width="900"></canvas>
+              <canvas class="statistics__chart statistics__chart--time" width="900"></canvas>
             </div>
           </section>`;
 };
 
-export default class Statistics extends SmartView {
+export default class Statistics extends Abstract {
+  constructor(callback) {
+    super();
+
+    callback();
+  }
+
   getTemplate() {
     return createStatisticsTemplate();
+  }
+
+  getMoneyCtx() {
+    return this.getElement().querySelector(`.statistics__chart--money`);
+  }
+
+  getTransportCtx() {
+    return this.getElement().querySelector(`.statistics__chart--transport`);
+  }
+
+  getTimeSpendCtx() {
+    return this.getElement().querySelector(`.statistics__chart--time`);
   }
 }
