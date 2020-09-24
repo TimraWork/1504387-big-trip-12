@@ -1,18 +1,18 @@
 import SmartView from "./smart.js";
 import {EVENT_TYPE} from '../const.js';
-import {formatDateTime, generateId} from '../utils/common.js';
+import {formatDateTime} from '../utils/common.js';
 import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination, validatePrice, validateDate} from '../utils/event.js';
 
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
-  id: generateId(),
-  type: EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1],
+  // console.log('EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1] = ', EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1]);
+  type: `restaurant`,
   dateRange: [new Date(), new Date()],
   offers: [],
   destination: ``,
-  price: 0,
+  price: ``,
   isFavorite: false
 };
 
@@ -57,6 +57,7 @@ const createEventTypeTemplate = (id, eventType) => {
 
                         ${typeValues
                             .map((typeValue) => {
+                              typeValue = typeValue.name;
                               return `<div class="event__type-item">
                                         <input id="event-type-${typeValue}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeValue}" ${eventType === typeValue ? `checked` : ``}>
                                         <label class="event__type-label  event__type-label--${typeValue}" for="event-type-${typeValue}-${id}">${capitalizeFirstLetter(typeValue)}</label>
@@ -104,13 +105,13 @@ const createDestinationsTemplate = (id, destinations) => {
           </datalist>`;
 };
 
-const createOfferItemTemplate = (offer, isChecked) => {
+const createOfferItemTemplate = (id, offer, isChecked) => {
   const {name, label, price} = offer;
   const checked = isChecked ? `checked` : ``;
 
   return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-1" type="checkbox" name="event-offer-${name}" ${checked}>
-            <label class="event__offer-label" for="event-offer-${name}-1">
+            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-${id}" type="checkbox" name="event-offer-${name}" ${checked}>
+            <label class="event__offer-label" for="event-offer-${name}-${id}">
               <span class="event__offer-title">${label}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${price}</span>
@@ -118,7 +119,7 @@ const createOfferItemTemplate = (offer, isChecked) => {
           </div>`;
 };
 
-const createOffersTemplate = (offers, dataOffers, type) => {
+const createOffersTemplate = (id = 1, offers, dataOffers, type) => {
   const offersByType = getOffers(dataOffers, type);
   let isChecked = false;
 
@@ -130,7 +131,7 @@ const createOffersTemplate = (offers, dataOffers, type) => {
                 ${offersByType
                   .map((offer) => {
                     isChecked = offers.includes(offer.name) ? true : false;
-                    return createOfferItemTemplate(offer, isChecked, dataOffers);
+                    return createOfferItemTemplate(id, offer, isChecked, dataOffers);
                   })
                   .join(``)}
               </div>
@@ -149,7 +150,7 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations, isNewEvent)
   const endDateTime = formatDateTime(dateRange[1]);
 
   const destinationTemplate = createDestinationTemplate(destination, dataDestinations);
-  const offersTemplate = createOffersTemplate(offers, dataOffers, type);
+  const offersTemplate = createOffersTemplate(id, offers, dataOffers, type);
   const destinationsTemplate = createDestinationsTemplate(id, dataDestinations);
   const favoriteButtonTemplate = createFavoriteButtonTemplate(id, isFavorite);
   const eventTypeTemplate = createEventTypeTemplate(id, type);
@@ -225,6 +226,7 @@ export default class EventEdit extends SmartView {
     this._changeTypeInputHandler = this._changeTypeInputHandler.bind(this);
     this._changeDestinationInputHandler = this._changeDestinationInputHandler.bind(this);
     this._changePriceInputHandler = this._changePriceInputHandler.bind(this);
+    this._changeOffersClickHandler = this._changeOffersClickHandler.bind(this);
 
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
@@ -254,8 +256,33 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector(`.event__input--destination`).addEventListener(`change`, this._changeDestinationInputHandler);
     this.getElement().querySelector(`.event__input--price`).addEventListener(`input`, this._changePriceInputHandler);
 
+    const offersNodes = this.getElement().querySelector(`.event__available-offers`);
+
+    if (offersNodes) {
+      offersNodes.querySelectorAll(`.event__offer-checkbox`)
+      .forEach((checkbox) => {
+        checkbox.addEventListener(`click`, this._changeOffersClickHandler);
+      });
+    }
+
     this._setStartDatepicker();
     this._setEndDatepicker();
+  }
+
+  _changeOffersClickHandler(evt) {
+    evt.preventDefault();
+    const offers = [];
+
+    this.getElement().querySelectorAll(`.event__offer-checkbox`)
+      .forEach((checkbox) => {
+        if (checkbox.checked) {
+          offers.push(checkbox.name.split(`-`).pop());
+        }
+      });
+
+    this.updateData({
+      offers
+    });
   }
 
   _setDatepicker(datepicker, inputElement, dataDatepicker, handler, isMinDateEnable) {
@@ -351,6 +378,7 @@ export default class EventEdit extends SmartView {
       type: evt.target.value,
       offers: []
     });
+    this.getElement().querySelector(`.event__available-offers`).addEventListener(`click`, this._changeOffersClickHandler);
   }
 
   _changeDestinationInputHandler(evt) {
@@ -373,6 +401,11 @@ export default class EventEdit extends SmartView {
     validatePrice(evt.target, this.getElement(), callback);
   }
 
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
+  }
+
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().addEventListener(`submit`, this._formSubmitHandler);
@@ -388,11 +421,6 @@ export default class EventEdit extends SmartView {
   setFormResetHandler(callback) {
     this._callback.formReset = callback;
     this.getElement().addEventListener(`reset`, this._formResetHandler);
-  }
-
-  _formDeleteClickHandler(evt) {
-    evt.preventDefault();
-    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
   }
 
   setDeleteClickHandler(callback) {

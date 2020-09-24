@@ -8,7 +8,7 @@ export const capitalizeFirstLetter = (string) => {
 
 export const formatEventType = (type) => {
   const labels = EVENT_TYPE.joinLabels;
-  const transfers = EVENT_TYPE.transfers;
+  const transfers = EVENT_TYPE.transfers.map((transfer) => transfer.name);
   const label = transfers.includes(type) ? labels[0] : labels[1];
 
   return `${capitalizeFirstLetter(type)}  ${label}`;
@@ -104,7 +104,7 @@ export const getEventsTotalPrice = (events, dataOffers) => {
       .map((offer)=>offer.price)
       .reduce((acc, curr) => (acc + curr), 0);
 
-    return accumulator + (current.price + sumOffers);
+    return accumulator + (+current.price + sumOffers);
   }, 0);
 
   return totalSum;
@@ -128,7 +128,9 @@ export const validateDestination = (destinationInput, eventEditForm, destination
 
 export const validatePrice = (priceInput, eventEditForm, callback) => {
   priceInput.setCustomValidity(``);
-  if (priceInput.validity.valueMissing || !priceInput.checkValidity()) {
+  const isStartedWithoutZero = /^(?:[1-9][0-9]*|0)$/.test(priceInput.value);
+
+  if (priceInput.validity.valueMissing || !priceInput.checkValidity() || !isStartedWithoutZero) {
     priceInput.setCustomValidity(`Please, write the positive integer number`);
   } else {
     priceInput.setCustomValidity(``);

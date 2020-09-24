@@ -54,7 +54,7 @@ const generateOffers = (type) => {
 };
 
 export const generateEvent = () => {
-  const type = generateType();
+  const type = generateType().name;
   return {
     id: generateId(),
     type,

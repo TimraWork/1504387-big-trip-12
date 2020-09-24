@@ -3,10 +3,22 @@ export const MAX_OFFERS = 3;
 export const MAX_INFO_CITIES = 3;
 export const TEXT_DIVIDER = ` &mdash; `;
 export const EVENT_TYPE = {
-  transfers: [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`],
-  activities: [`check-in`, `sightseeing`, `restaurant`],
+  transfers: [
+    {name: `taxi`, label: `🚕 TAXI`},
+    {name: `bus`, label: `🚌 BUS`},
+    {name: `train`, label: `🚂 TRAIN`},
+    {name: `ship`, label: `🛳 SHIP`},
+    {name: `transport`, label: `🚊 TRANSPORT`},
+    {name: `drive`, label: `🚗 DRIVE`},
+    {name: `flight`, label: `✈️ FLIGHT`}],
+  activities: [
+    {name: `check-in`, label: `🏨 CHECK-IN`},
+    {name: `sightseeing`, label: `🏛 SIGHTSEEING`},
+    {name: `restaurant`, label: `🍴 RESTAURANT`}],
   joinLabels: [`to`, `in`]
 };
+export const TRANSFERS_LABELS = [`🚕 TAXI`, `🚌 BUS`, `🚂 TRAIN`, `🛳 SHIP`, `🚊 TRANSPORT`, `🚗 DRIVE`, `✈️ FLIGHT`];
+export const ACTIVITIES_LABELS = [`🏨 CHECK-IN`, `🏛 SIGHTSEEING`, `🍴 RESTAURANT`];
 export const OFFERS_DATA = [
   {name: `seats`, label: `Choose seats`, types: [`flight`, `train`]},
   {name: `meal`, label: `Add meal`, types: [`flight`, `train`, `ship`]},
@@ -46,4 +58,8 @@ export const FilterType = {
   ALL: `everything`,
   FUTURE: `future`,
   PAST: `past`,
+};
+export const MenuItem = {
+  TABLE: `Table`,
+  STATS: `Stats`
 };

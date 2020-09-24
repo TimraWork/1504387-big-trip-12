@@ -1,20 +1,18 @@
-import {EVENT_COUNT, RenderPosition} from './const.js';
-import {render} from './utils/render.js';
+import {EVENT_COUNT} from './const.js';
 import {generateEvent} from './mock/event.js';
 import {generateOffers} from './mock/offers.js';
 import {generateDestinations} from './mock/destinations.js';
 
 import TripPresenter from "./presenter/trip.js";
+import MenuPresenter from "./presenter/menu.js";
 import FilterPresenter from "./presenter/filter.js";
+import InfoPresenter from './presenter/info.js';
+import StatisticsPresenter from './presenter/statistics.js';
 
 import EventsModel from "./model/events.js";
 import OffersModel from "./model/offers.js";
 import DestinationsModel from "./model/destinations.js";
 import FilterModel from "./model/filter.js";
-
-import MenuView from "./view/menu.js";
-import InfoView from "./view/info.js";
-import EventNewButtonView from "./view/event-new-button.js";
 
 const infoContainer = document.querySelector(`.trip-main`);
 const eventsContainer = document.querySelector(`.trip-events`);
@@ -34,19 +32,13 @@ eventsModel.setEvents(events);
 offersModel.setOffers(offers);
 destinationsModel.setDestinations(destinations);
 
-const newEventButtonComponent = new EventNewButtonView();
-
-render(infoContainer, new InfoView(events, offers), RenderPosition.AFTER_BEGIN);
-render(infoContainer, newEventButtonComponent, RenderPosition.BEFORE_END);
-render(titleMenu, new MenuView(), RenderPosition.AFTER_END);
-
 const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel);
+const statisticsPresenter = new StatisticsPresenter(eventsContainer, eventsModel);
 const filterPresenter = new FilterPresenter(titleFilter, filterModel, eventsModel);
+const infoPresenter = new InfoPresenter(infoContainer, eventsModel, offersModel);
+const menuPresenter = new MenuPresenter(infoContainer, titleMenu, tripPresenter, statisticsPresenter);
 
-filterPresenter.init();
 tripPresenter.init();
-
-document.querySelector(`.trip-main__event-add-btn`).addEventListener(`click`, (evt) => {
-  evt.preventDefault();
-  tripPresenter.createEvent();
-});
+filterPresenter.init();
+infoPresenter.init();
+menuPresenter.init();

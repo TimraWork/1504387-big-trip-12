@@ -1,5 +1,6 @@
 import EventView from "../view/event.js";
 import EventEditView from "../view/event-edit.js";
+
 import {replace, remove} from '../utils/render.js';
 import {isDatesEqual} from '../utils/event.js';
 import {KeyCode, UserAction, UpdateType} from '../const.js';
