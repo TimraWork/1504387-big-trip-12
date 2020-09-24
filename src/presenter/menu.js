@@ -25,19 +25,19 @@ export default class Menu {
     render(this._titleMenu, this._menuComponent, RenderPosition.AFTER_END);
 
     this._menuComponent.setMenuClickHandler(this._handleMenuClick);
+    this._menuComponent.setMenuItem(MenuItem.TABLE);
     this._eventNewButtonComponent.setEventNewClickHandler(this._handleEventNewButtonClick);
   }
 
   _handleEventNewFormClose() {
-    this._statisticsPresenter.destroy(); // Скрыть статистику
-    // siteMenuComponent.getElement().querySelector(`[value=${MenuItem.TASKS}]`).disabled = false;
+    this._statisticsPresenter.destroy();
     this._menuComponent.setMenuItem(MenuItem.TABLE);
   }
 
   _handleEventNewButtonClick() {
-    this._statisticsPresenter.destroy(); // Скрыть статистику
-    this._tripPresenter.init(); // Показать доску
-    this._tripPresenter.createEvent(this._handleEventNewFormClose); // Показать форму добавления новой задачи
+    this._statisticsPresenter.destroy();
+    this._tripPresenter.init();
+    this._tripPresenter.createEvent(this._handleEventNewFormClose);
   }
 
   _handleMenuClick(menuItem) {

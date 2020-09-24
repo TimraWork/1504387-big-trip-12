@@ -33,15 +33,12 @@ offersModel.setOffers(offers);
 destinationsModel.setDestinations(destinations);
 
 const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel);
-
 const statisticsPresenter = new StatisticsPresenter(eventsContainer, eventsModel);
-
 const filterPresenter = new FilterPresenter(titleFilter, filterModel, eventsModel);
 const infoPresenter = new InfoPresenter(infoContainer, eventsModel, offersModel);
 const menuPresenter = new MenuPresenter(infoContainer, titleMenu, tripPresenter, statisticsPresenter);
 
-// tripPresenter.init();
-statisticsPresenter.init();
+tripPresenter.init();
 filterPresenter.init();
 infoPresenter.init();
 menuPresenter.init();

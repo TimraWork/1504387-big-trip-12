@@ -4,7 +4,15 @@ import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import {render, remove} from '../utils/render.js';
-import {getEventsTypesLabels, getEventsTypesCount, getEventsTypesPrices, getEventsTypesTimes, getTransportsLabels, getTransportsCount} from '../utils/statistics.js';
+import {
+  getEventsTypesLabels,
+  getEventsTypesCount,
+  getEventsTypesPrices,
+  getEventsTypesTimes,
+  getTransportsLabels,
+  getTransportsCount,
+  getEventsTransportsCounts
+} from '../utils/statistics.js';
 import {RenderPosition} from '../const.js';
 
 export default class STATISTICS {
@@ -38,7 +46,7 @@ export default class STATISTICS {
 
       const transportsLabels = getTransportsLabels(events);
       const transportsCount = getTransportsCount(events);
-      const transportsCounts = getEventsTypesPrices(events);
+      const transportsCounts = getEventsTransportsCounts(events);
 
       const moneyCtx = this._statisticsComponent.getMoneyCtx();
       const transportCtx = this._statisticsComponent.getTransportCtx();
@@ -52,29 +60,28 @@ export default class STATISTICS {
 
       this._renderMoneyChart(moneyCtx, typesLabels, typesPrices);
       this._renderTransportChart(transportCtx, transportsLabels, transportsCounts);
-      this._renderTimeSpendChart(timeSpendCtx, typesLabels, typesPrices);
+      this._renderTimeSpendChart(timeSpendCtx, typesLabels, typesTimes);
     }
     return true;
   }
 
   // «Сколько за время путешествия было потрачено на такси или рестораны?»
   _renderMoneyChart(ctx, labels, data) {
-    const formatter = `€ `;
+    const formatter = (val) => `€ ${val}`;
     const text = `MONEY`;
     return new Chart(ctx, this._setChartArguments(labels, data, formatter, text));
   }
 
   // «Сколько раз нам придётся воспользоваться самолётом, такси и так далее?»
   _renderTransportChart(ctx, labels, data) {
-    // const data = [4, 3, 2, 1];
-    const formatter = `x`;
+    const formatter = (val) => `${val}x`;
     const text = `TRANSPORT`;
     return new Chart(ctx, this._setChartArguments(labels, data, formatter, text));
   }
 
   // «Сколько дней пользователь проведёт в самолёте, такси, ресторане и так далее?»
   _renderTimeSpendChart(ctx, labels, data) {
-    const formatter = `H`;
+    const formatter = (val) => `${val}H`;
     const text = `TIME SPENT`;
     return new Chart(ctx, this._setChartArguments(labels, data, formatter, text));
   }
@@ -103,7 +110,7 @@ export default class STATISTICS {
             color: `#000000`,
             anchor: `end`,
             align: `start`,
-            formatter: (val) => `${formatter} ${val}` // тут изменить
+            formatter // тут изменить
           }
         },
         title: {

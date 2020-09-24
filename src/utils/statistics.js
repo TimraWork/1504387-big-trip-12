@@ -1,4 +1,5 @@
 import {EVENT_TYPE} from "../const";
+import moment from "moment";
 
 const EVENT_TYPES = [
   ...EVENT_TYPE.transfers,
@@ -11,8 +12,30 @@ const getEventsUniqueTypes = (events) => {
   return [...new Set(events.map((event) => event.type))];
 };
 
+const getEventsUniqueTransports = (events) => {
+  return getEventsUniqueTypes(events).filter((event) => TRANSFERS.includes(event));
+};
+
 export const getEventsTypesCount = (events) => {
   return getEventsUniqueTypes(events).length;
+};
+
+export const getEventsTransportsCounts = (events) => {
+  return getEventsUniqueTransports(events)
+          .map((transport) => events
+            .filter((event) => event.type === transport)
+              .length
+          );
+};
+
+export const getEventsTypesPrices = (events) => {
+  const prices = getEventsUniqueTypes(events)
+    .map((type) => {
+      const filteredEventsByType = events.filter((event) => event.type === type);
+      return filteredEventsByType.reduce((acc, curr) => (acc + curr.price), 0);
+    });
+
+  return prices;
 };
 
 export const getEventsTypesLabels = (events) => {
@@ -25,10 +48,10 @@ export const getEventsTypesLabels = (events) => {
 };
 
 export const getTransportsLabels = (events) => {
-  const transports = getEventsUniqueTypes(events).filter((event) => TRANSFERS.includes(event));
-  const transportLabels = transports
+  const transportLabels = getEventsUniqueTransports(events)
     .map((type) => EVENT_TYPE.transfers
-      .find((label) => label.name === type).label);
+      .find((label) => label.name === type)
+        .label);
 
   return transportLabels;
 };
@@ -37,19 +60,23 @@ export const getTransportsCount = (events) => {
   return getTransportsLabels(events).length;
 };
 
-export const getEventsTypesPrices = (events) => {
-  const prices = [...new Set(events.map((event) => event.price))];
-
-  return prices;
+const getTimeInterval = (event) => {
+  const [d1, d2] = event.dateRange;
+  return moment(d2).diff(moment(d1));
 };
 
-// export const getEventsTypesPrices = (events) => {
-//   console.log(events.map((event) => event.type), `\n`, getEventsUniqueTypes(events));
-
-//   return [1, 2, 3, 5];
-// };
-
 export const getEventsTypesTimes = (events) => {
-  return events;
+  const times = getEventsUniqueTypes(events)
+    .map((type) => {
+      const filteredEventsByType = events.filter((event) => event.type === type);
+      const interval = filteredEventsByType
+        .reduce((acc, curr) => {
+          return acc + getTimeInterval(curr);
+        }, 0);
+
+      return Math.trunc(moment.duration(interval).asHours());
+    });
+
+  return times;
 };
 
