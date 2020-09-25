@@ -7,7 +7,6 @@ import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
-  // console.log('EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1] = ', EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1]);
   type: `restaurant`,
   dateRange: [new Date(), new Date()],
   offers: [],
@@ -21,7 +20,7 @@ const createPhotosTemplate = (photos) => {
             <div class="event__photos-tape">
               ${photos
                   .map((photo)=> {
-                    return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+                    return `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`;
                   })
                   .join(``)}
             </div>
@@ -45,7 +44,6 @@ const createEventTypeTemplate = (id, eventType) => {
               <img class="event__type-icon" width="17" height="17" src="img/icons/${eventType}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
-
 
             <div class="event__type-list">
               ${Object.entries(EVENT_TYPE)
@@ -100,19 +98,21 @@ const createDestinationsTemplate = (id, destinations) => {
   return `<datalist id="destination-list-${id}">
             ${destinations
               .map((destination)=>{
-                return `<option value="${destination.name}"></option>`;
-              })}
+                return `<option value="${destination.name}">${destination.name}</option>`;
+              })
+              .join(``)
+}
           </datalist>`;
 };
 
 const createOfferItemTemplate = (id, offer, isChecked) => {
-  const {name, label, price} = offer;
+  const {title, price} = offer;
   const checked = isChecked ? `checked` : ``;
 
   return `<div class="event__offer-selector">
             <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-${id}" type="checkbox" name="event-offer-${name}" ${checked}>
             <label class="event__offer-label" for="event-offer-${name}-${id}">
-              <span class="event__offer-title">${label}</span>
+              <span class="event__offer-title">${title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${price}</span>
             </label>
@@ -130,7 +130,7 @@ const createOffersTemplate = (id = 1, offers, dataOffers, type) => {
               <div class="event__available-offers">
                 ${offersByType
                   .map((offer) => {
-                    isChecked = offers.includes(offer.name) ? true : false;
+                    isChecked = offers.find((of) => of.title === offer.title) ? true : false;
                     return createOfferItemTemplate(id, offer, isChecked, dataOffers);
                   })
                   .join(``)}
@@ -162,7 +162,7 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations, isNewEvent)
 
               <div class="event__field-group  event__field-group--destination">
                 <label class="event__label  event__type-output" for="event-destination-${id}">${typeWithLabel}</label>
-                <input required="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination}" list="destination-list-${id}">
+                <input required="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
                 ${destinationsTemplate}
               </div>
 

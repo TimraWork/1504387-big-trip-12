@@ -25,7 +25,7 @@ export const filterEventsByDays = (events, day) => {
 };
 
 export const getEventsCitiesTitles = (events) => {
-  const cities = events.map((event) => event.destination);
+  const cities = events.map((event) => event.destination.name);
 
   const titlesWithDividers = `${cities.join(TEXT_DIVIDER)}`;
   const titlesWithEllipsis = `${cities[0]} ${TEXT_DIVIDER} ... ${TEXT_DIVIDER} ${cities[cities.length - 1]}`;
@@ -80,15 +80,21 @@ export const getOffersByType = (type) => {
 };
 
 export const getOffers = (dataOffers, type) => {
-  return dataOffers.filter((offer) => offer.types.includes(type));
+  if (dataOffers.length) {
+    const filteredDataOffers = dataOffers.filter((offer) => offer.type === type);
+    const [offersObj] = filteredDataOffers;
+
+    return offersObj.offers;
+  }
+  return dataOffers;
 };
 
 export const getOffersByData = (offers, dataOffers) => {
   const filteredDataOffers = [];
 
-  offers.forEach((offer) =>{
-    filteredDataOffers.push(dataOffers.find((element) => element.name === offer));
-  });
+  // offers.forEach((offer) =>{
+  //   filteredDataOffers.push(dataOffers.find((element) => element.name === offer));
+  // });
 
   return filteredDataOffers;
 };

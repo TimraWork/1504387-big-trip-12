@@ -1,7 +1,4 @@
 import {UpdateType} from './const.js';
-// import {generateEvent} from './mock/event.js';
-import {generateOffers} from './mock/offers.js';
-import {generateDestinations} from './mock/destinations.js';
 
 import TripPresenter from "./presenter/trip.js";
 import MenuPresenter from "./presenter/menu.js";
@@ -24,18 +21,10 @@ const eventsContainer = document.querySelector(`.trip-events`);
 const titleMenu = infoContainer.querySelector(`h2:nth-of-type(1)`);
 const titleFilter = infoContainer.querySelector(`h2:nth-of-type(2)`);
 
-// const events = new Array(EVENT_COUNT).fill().map(generateEvent);
-const offers = generateOffers();
-const destinations = generateDestinations();
-
 const eventsModel = new EventsModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
-
-// eventsModel.setEvents(events);
-offersModel.setOffers(offers);
-destinationsModel.setDestinations(destinations);
 
 const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel, api);
 const statisticsPresenter = new StatisticsPresenter(eventsContainer, eventsModel);
@@ -50,9 +39,25 @@ filterPresenter.init();
 
 api.getEvents()
   .then((events) => {
-    console.log(events);
     eventsModel.setEvents(UpdateType.INIT, events);
   })
   .catch(() => {
     eventsModel.setEvents(UpdateType.INIT, []);
   });
+
+api.getDestinations()
+  .then((destinations) => {
+    destinationsModel.setDestinations(UpdateType.INIT, destinations);
+  })
+  .catch(() => {
+    destinationsModel.setDestinations(UpdateType.INIT, []);
+  });
+
+api.getOffers()
+  .then((offers) => {
+    offersModel.setOffers(UpdateType.INIT, offers);
+  })
+  .catch(() => {
+    offersModel.setOffers(UpdateType.INIT, []);
+  });
+

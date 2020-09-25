@@ -1,4 +1,6 @@
 import EventsModel from "./model/events.js";
+import DestinationsModel from "./model/destinations.js";
+import OffersModel from "./model/offers.js";
 
 const Method = {
   GET: `GET`,
@@ -31,6 +33,20 @@ export default class Api {
     })
     .then(Api.toJSON)
     .then(EventsModel.adaptToClient);
+  }
+
+  getDestinations() {
+    return this._load({url: `destinations`})
+      .then(Api.toJSON)
+      .then((destinations) => destinations.map(DestinationsModel.adaptToClient));
+  }
+
+  getOffers() {
+    return this._load({url: `/offers`})
+      .then(Api.toJSON)
+      .then((offers) => {
+        return offers.map(OffersModel.adaptToClient);
+      });
   }
 
   _load({
