@@ -1,17 +1,20 @@
 import SmartView from "./smart.js";
 import {EVENT_TYPE} from '../const.js';
 import {formatDateTime} from '../utils/common.js';
-import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination, validatePrice, validateDate} from '../utils/event.js';
+import {formatEventType, capitalizeFirstLetter, getOffers, validateDestination, validatePrice, validateDate} from '../utils/event.js';
 
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
-  // console.log('EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1] = ', EVENT_TYPE.activities[EVENT_TYPE.activities.length - 1]);
-  type: `restaurant`,
+  type: `sightseeing`,
   dateRange: [new Date(), new Date()],
   offers: [],
-  destination: ``,
+  destination: {
+    name: ``,
+    description: ``,
+    photos: []
+  },
   price: ``,
   isFavorite: false
 };
@@ -21,7 +24,7 @@ const createPhotosTemplate = (photos) => {
             <div class="event__photos-tape">
               ${photos
                   .map((photo)=> {
-                    return `<img class="event__photo" src="${photo}" alt="Event photo">`;
+                    return `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`;
                   })
                   .join(``)}
             </div>
@@ -45,7 +48,6 @@ const createEventTypeTemplate = (id, eventType) => {
               <img class="event__type-icon" width="17" height="17" src="img/icons/${eventType}.png" alt="Event type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-${id}" type="checkbox">
-
 
             <div class="event__type-list">
               ${Object.entries(EVENT_TYPE)
@@ -71,17 +73,8 @@ const createEventTypeTemplate = (id, eventType) => {
             </div>`;
 };
 
-const createDestinationTemplate = (destination, dataDestinations) => {
-  const isDestinationCorrect = dataDestinations.map((element) => element.name).includes(destination);
-
-  const photos = isDestinationCorrect ?
-    getDestinationByData(destination, dataDestinations).photos :
-    [];
-
-  const description = isDestinationCorrect ?
-    getDestinationByData(destination, dataDestinations).description :
-    ``;
-
+const createDestinationTemplate = (destination) => {
+  const {description, photos} = destination;
   const photosTemplate = createPhotosTemplate(photos);
 
   if (photos.length || description.length) {
@@ -92,7 +85,6 @@ const createDestinationTemplate = (destination, dataDestinations) => {
               ${photosTemplate}
             </section>`;
   }
-
   return ``;
 };
 
@@ -100,19 +92,21 @@ const createDestinationsTemplate = (id, destinations) => {
   return `<datalist id="destination-list-${id}">
             ${destinations
               .map((destination)=>{
-                return `<option value="${destination.name}"></option>`;
-              })}
+                return `<option value="${destination.name}">${destination.name}</option>`;
+              })
+              .join(``)
+}
           </datalist>`;
 };
 
 const createOfferItemTemplate = (id, offer, isChecked) => {
-  const {name, label, price} = offer;
+  const {title, price} = offer;
   const checked = isChecked ? `checked` : ``;
 
   return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-${id}" type="checkbox" name="event-offer-${name}" ${checked}>
-            <label class="event__offer-label" for="event-offer-${name}-${id}">
-              <span class="event__offer-title">${label}</span>
+            <input class="event__offer-checkbox visually-hidden" id="event-offer-${title}-${id}" type="checkbox" ${checked} data-title="${title}" data-price="${price}">
+            <label class="event__offer-label" for="event-offer-${title}-${id}">
+              <span class="event__offer-title">${title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${price}</span>
             </label>
@@ -130,7 +124,7 @@ const createOffersTemplate = (id = 1, offers, dataOffers, type) => {
               <div class="event__available-offers">
                 ${offersByType
                   .map((offer) => {
-                    isChecked = offers.includes(offer.name) ? true : false;
+                    isChecked = offers.find((of) => of.title === offer.title) ? true : false;
                     return createOfferItemTemplate(id, offer, isChecked, dataOffers);
                   })
                   .join(``)}
@@ -162,7 +156,7 @@ const createEventFormTemplate = (data, dataOffers, dataDestinations, isNewEvent)
 
               <div class="event__field-group  event__field-group--destination">
                 <label class="event__label  event__type-output" for="event-destination-${id}">${typeWithLabel}</label>
-                <input required="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination}" list="destination-list-${id}">
+                <input required="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}">
                 ${destinationsTemplate}
               </div>
 
@@ -269,20 +263,22 @@ export default class EventEdit extends SmartView {
     this._setEndDatepicker();
   }
 
-  _changeOffersClickHandler(evt) {
-    evt.preventDefault();
+  _changeOffersClickHandler() {
     const offers = [];
 
     this.getElement().querySelectorAll(`.event__offer-checkbox`)
       .forEach((checkbox) => {
         if (checkbox.checked) {
-          offers.push(checkbox.name.split(`-`).pop());
+          offers.push(
+              {
+                title: checkbox.dataset.title,
+                price: +checkbox.dataset.price
+              });
         }
       });
-
     this.updateData({
       offers
-    });
+    }, true);
   }
 
   _setDatepicker(datepicker, inputElement, dataDatepicker, handler, isMinDateEnable) {
@@ -378,13 +374,18 @@ export default class EventEdit extends SmartView {
       type: evt.target.value,
       offers: []
     });
-    this.getElement().querySelector(`.event__available-offers`).addEventListener(`click`, this._changeOffersClickHandler);
   }
 
   _changeDestinationInputHandler(evt) {
+    const currentDestination = this._destinations.find((destination) => destination.name === evt.target.value);
+
     const callback = () => {
       this.updateData({
-        destination: evt.target.value
+        destination: {
+          name: currentDestination.name,
+          description: currentDestination.description,
+          photos: currentDestination.photos
+        }
       });
     };
 
@@ -394,7 +395,7 @@ export default class EventEdit extends SmartView {
   _changePriceInputHandler(evt) {
     const callback = () => {
       this.updateData({
-        price: evt.target.value
+        price: +evt.target.value
       }, true);
     };
 

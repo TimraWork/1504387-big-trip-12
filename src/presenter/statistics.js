@@ -65,21 +65,18 @@ export default class STATISTICS {
     return true;
   }
 
-  // «Сколько за время путешествия было потрачено на такси или рестораны?»
   _renderMoneyChart(ctx, labels, data) {
     const formatter = (val) => `€ ${val}`;
     const text = `MONEY`;
     return new Chart(ctx, this._setChartArguments(labels, data, formatter, text));
   }
 
-  // «Сколько раз нам придётся воспользоваться самолётом, такси и так далее?»
   _renderTransportChart(ctx, labels, data) {
     const formatter = (val) => `${val}x`;
     const text = `TRANSPORT`;
     return new Chart(ctx, this._setChartArguments(labels, data, formatter, text));
   }
 
-  // «Сколько дней пользователь проведёт в самолёте, такси, ресторане и так далее?»
   _renderTimeSpendChart(ctx, labels, data) {
     const formatter = (val) => `${val}H`;
     const text = `TIME SPENT`;
@@ -91,9 +88,9 @@ export default class STATISTICS {
       plugins: [ChartDataLabels],
       type: `horizontalBar`,
       data: {
-        labels, // тут изменить
+        labels,
         datasets: [{
-          data, // тут изменить
+          data,
           backgroundColor: `#ffffff`,
           hoverBackgroundColor: `#ffffff`,
           anchor: `start`,
@@ -110,12 +107,12 @@ export default class STATISTICS {
             color: `#000000`,
             anchor: `end`,
             align: `start`,
-            formatter // тут изменить
+            formatter
           }
         },
         title: {
           display: true,
-          text, // тут изменить
+          text,
           fontColor: `#000000`,
           fontSize: 23,
           position: `left`

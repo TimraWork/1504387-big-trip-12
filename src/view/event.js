@@ -2,7 +2,7 @@ import {MAX_OFFERS} from '../const.js';
 import AbstractView from './abstract.js';
 
 import {formatTime, formatDateTime} from '../utils/common.js';
-import {formatEventType, getEventDuration, getOffersByData} from '../utils/event.js';
+import {formatEventType, getEventDuration} from '../utils/event.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -19,7 +19,7 @@ const createOffersTemplate = (offers) => {
             <ul class="event__selected-offers">
               ${ offers
                   .slice(0, MAX_OFFERS)
-                  .map((offer)=> createOfferTemplate(offer.label, offer.price))
+                  .map((offer)=> createOfferTemplate(offer.title, offer.price))
                   .join(``)}
             </ul>`;
   }
@@ -27,7 +27,7 @@ const createOffersTemplate = (offers) => {
   return ``;
 };
 
-const createEventTemplate = (event, dataOffers) => {
+const createEventTemplate = (event) => {
   const {type, destination, dateRange, price, offers} = event;
 
   const typeWithLabel = formatEventType(type);
@@ -37,14 +37,14 @@ const createEventTemplate = (event, dataOffers) => {
   const endDateTime = formatDateTime(dateRange[1]);
   const duration = getEventDuration(dateRange);
 
-  const offersTemplate = createOffersTemplate(getOffersByData(offers, dataOffers));
+  const offersTemplate = createOffersTemplate(offers);
 
   return `<li class="trip-events__item">
             <div class="event">
               <div class="event__type">
                 <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
               </div>
-              <h3 class="event__title">${typeWithLabel} ${destination}</h3>
+              <h3 class="event__title">${typeWithLabel} ${destination.name}</h3>
 
               <div class="event__schedule">
                 <p class="event__time">

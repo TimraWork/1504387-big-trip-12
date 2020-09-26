@@ -17,8 +17,6 @@ export const EVENT_TYPE = {
     {name: `restaurant`, label: `🍴 RESTAURANT`}],
   joinLabels: [`to`, `in`]
 };
-export const TRANSFERS_LABELS = [`🚕 TAXI`, `🚌 BUS`, `🚂 TRAIN`, `🛳 SHIP`, `🚊 TRANSPORT`, `🚗 DRIVE`, `✈️ FLIGHT`];
-export const ACTIVITIES_LABELS = [`🏨 CHECK-IN`, `🏛 SIGHTSEEING`, `🍴 RESTAURANT`];
 export const OFFERS_DATA = [
   {name: `seats`, label: `Choose seats`, types: [`flight`, `train`]},
   {name: `meal`, label: `Add meal`, types: [`flight`, `train`, `ship`]},
@@ -52,7 +50,8 @@ export const UserAction = {
 export const UpdateType = {
   PATCH: `PATCH`,
   MINOR: `MINOR`,
-  MAJOR: `MAJOR`
+  MAJOR: `MAJOR`,
+  INIT: `INIT`
 };
 export const FilterType = {
   ALL: `everything`,

@@ -25,7 +25,7 @@ export const filterEventsByDays = (events, day) => {
 };
 
 export const getEventsCitiesTitles = (events) => {
-  const cities = events.map((event) => event.destination);
+  const cities = events.map((event) => event.destination.name);
 
   const titlesWithDividers = `${cities.join(TEXT_DIVIDER)}`;
   const titlesWithEllipsis = `${cities[0]} ${TEXT_DIVIDER} ... ${TEXT_DIVIDER} ${cities[cities.length - 1]}`;
@@ -80,27 +80,23 @@ export const getOffersByType = (type) => {
 };
 
 export const getOffers = (dataOffers, type) => {
-  return dataOffers.filter((offer) => offer.types.includes(type));
-};
+  if (dataOffers.length) {
+    const filteredDataOffers = dataOffers.filter((offer) => offer.type === type);
+    const [offersObj] = filteredDataOffers;
 
-export const getOffersByData = (offers, dataOffers) => {
-  const filteredDataOffers = [];
-
-  offers.forEach((offer) =>{
-    filteredDataOffers.push(dataOffers.find((element) => element.name === offer));
-  });
-
-  return filteredDataOffers;
+    return offersObj.offers;
+  }
+  return dataOffers;
 };
 
 export const getDestinationByData = (destination, dataDestinations) => {
   return dataDestinations.find((element) => element.name === destination);
 };
 
-export const getEventsTotalPrice = (events, dataOffers) => {
+export const getEventsTotalPrice = (events) => {
   const totalSum = events.reduce((accumulator, current)=>{
 
-    const sumOffers = getOffersByData(current.offers, dataOffers)
+    const sumOffers = current.offers
       .map((offer)=>offer.price)
       .reduce((acc, curr) => (acc + curr), 0);
 
@@ -109,7 +105,6 @@ export const getEventsTotalPrice = (events, dataOffers) => {
 
   return totalSum;
 };
-
 
 export const validateDestination = (destinationInput, eventEditForm, destinations, callback) => {
   const isDataCorrect = destinations.map((destination) => destination.name).includes(destinationInput.value);

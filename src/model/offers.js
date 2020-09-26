@@ -6,11 +6,41 @@ export default class Offers extends Observer {
     this._offers = [];
   }
 
-  setOffers(offers) {
+  setOffers(updateType, offers) {
     this._offers = offers.slice();
+
+    this._notify(updateType);
   }
 
   getOffers() {
     return this._offers;
+  }
+
+  static adaptToClient(offer) {
+    const adaptedOffer = Object.assign(
+        {},
+        offer,
+        {
+          // isFavorite: event.is_favorite,
+        }
+    );
+
+    // delete adaptedOffer.is_favorite;
+
+    return adaptedOffer;
+  }
+
+  static adaptToServer(event) {
+    const adaptedOffer = Object.assign(
+        {},
+        event,
+        {
+          // "is_favorite": event.isFavorite,
+        }
+    );
+
+    // delete adaptedEvent.isFavorite;
+
+    return adaptedOffer;
   }
 }
