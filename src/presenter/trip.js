@@ -127,7 +127,7 @@ export default class Trip {
   _handleModelEvent(updateType, data) {
     switch (updateType) {
       case UpdateType.PATCH:
-        this._eventPresenter[data.id].init(data, this._getOffers(), this._getDestinations());
+        this._eventPresenter[data.id].init(data, this._tripOffers, this._tripDestinations);
         break;
       case UpdateType.MINOR:
         this._clearTrip();
@@ -217,6 +217,9 @@ export default class Trip {
   }
 
   _renderEvents() {
+    this._tripOffers = this._getOffers();
+    this._tripDestinations = this._getDestinations();
+
     render(this._tripContainer, this._createEventsListNode(), RenderPosition.BEFORE_END);
   }
 
@@ -259,9 +262,6 @@ export default class Trip {
       this._renderNoEvents();
       return;
     }
-
-    this._tripOffers = this._getOffers();
-    this._tripDestinations = this._getDestinations();
 
     this._renderSort();
     this._renderEvents();

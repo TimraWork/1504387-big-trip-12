@@ -64,6 +64,11 @@ export default class Events extends Observer {
           dateRange: [new Date(event.date_from), new Date(event.date_to)],
           isFavorite: event.is_favorite,
           price: event.base_price,
+          destination: {
+            name: event.destination.name,
+            description: event.destination.description,
+            photos: event.destination.pictures
+          }
         }
     );
 
@@ -71,6 +76,7 @@ export default class Events extends Observer {
     delete adaptedEvent.date_from;
     delete adaptedEvent.date_to;
     delete adaptedEvent.base_price;
+    delete adaptedEvent.destination.pictures;
 
     return adaptedEvent;
   }
@@ -84,13 +90,19 @@ export default class Events extends Observer {
           "date_to": event.dateRange[1].toISOString(),
           "is_favorite": event.isFavorite,
           "repeating_days": event.repeating,
-          "base_price": event.price
+          "base_price": event.price,
+          "destination": {
+            "name": event.destination.name,
+            "description": event.destination.description,
+            "pictures": event.destination.photos
+          },
         }
     );
 
     delete adaptedEvent.dateRange;
     delete adaptedEvent.isFavorite;
     delete adaptedEvent.price;
+    delete adaptedEvent.destination.photos;
 
     return adaptedEvent;
   }

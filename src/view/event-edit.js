@@ -1,16 +1,20 @@
 import SmartView from "./smart.js";
 import {EVENT_TYPE} from '../const.js';
 import {formatDateTime} from '../utils/common.js';
-import {formatEventType, capitalizeFirstLetter, getOffers, getDestinationByData, validateDestination, validatePrice, validateDate} from '../utils/event.js';
+import {formatEventType, capitalizeFirstLetter, getOffers, validateDestination, validatePrice, validateDate} from '../utils/event.js';
 
 import flatpickr from "flatpickr";
 import "../../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const BLANK_EVENT = {
-  type: `restaurant`,
+  type: `sightseeing`,
   dateRange: [new Date(), new Date()],
   offers: [],
-  destination: ``,
+  destination: {
+    name: ``,
+    description: ``,
+    photos: []
+  },
   price: ``,
   isFavorite: false
 };
@@ -69,17 +73,8 @@ const createEventTypeTemplate = (id, eventType) => {
             </div>`;
 };
 
-const createDestinationTemplate = (destination, dataDestinations) => {
-  const isDestinationCorrect = dataDestinations.map((element) => element.name).includes(destination);
-
-  const photos = isDestinationCorrect ?
-    getDestinationByData(destination, dataDestinations).photos :
-    [];
-
-  const description = isDestinationCorrect ?
-    getDestinationByData(destination, dataDestinations).description :
-    ``;
-
+const createDestinationTemplate = (destination) => {
+  const {description, photos} = destination;
   const photosTemplate = createPhotosTemplate(photos);
 
   if (photos.length || description.length) {
@@ -90,7 +85,6 @@ const createDestinationTemplate = (destination, dataDestinations) => {
               ${photosTemplate}
             </section>`;
   }
-
   return ``;
 };
 
@@ -110,8 +104,8 @@ const createOfferItemTemplate = (id, offer, isChecked) => {
   const checked = isChecked ? `checked` : ``;
 
   return `<div class="event__offer-selector">
-            <input class="event__offer-checkbox visually-hidden" id="event-offer-${name}-${id}" type="checkbox" name="event-offer-${name}" ${checked}>
-            <label class="event__offer-label" for="event-offer-${name}-${id}">
+            <input class="event__offer-checkbox visually-hidden" id="event-offer-${title}-${id}" type="checkbox" ${checked} data-title="${title}" data-price="${price}">
+            <label class="event__offer-label" for="event-offer-${title}-${id}">
               <span class="event__offer-title">${title}</span>
               &plus;
               &euro;&nbsp;<span class="event__offer-price">${price}</span>
@@ -269,20 +263,22 @@ export default class EventEdit extends SmartView {
     this._setEndDatepicker();
   }
 
-  _changeOffersClickHandler(evt) {
-    evt.preventDefault();
+  _changeOffersClickHandler() {
     const offers = [];
 
     this.getElement().querySelectorAll(`.event__offer-checkbox`)
       .forEach((checkbox) => {
         if (checkbox.checked) {
-          offers.push(checkbox.name.split(`-`).pop());
+          offers.push(
+              {
+                title: checkbox.dataset.title,
+                price: +checkbox.dataset.price
+              });
         }
       });
-
     this.updateData({
       offers
-    });
+    }, true);
   }
 
   _setDatepicker(datepicker, inputElement, dataDatepicker, handler, isMinDateEnable) {
@@ -378,13 +374,18 @@ export default class EventEdit extends SmartView {
       type: evt.target.value,
       offers: []
     });
-    this.getElement().querySelector(`.event__available-offers`).addEventListener(`click`, this._changeOffersClickHandler);
   }
 
   _changeDestinationInputHandler(evt) {
+    const currentDestination = this._destinations.find((destination) => destination.name === evt.target.value);
+
     const callback = () => {
       this.updateData({
-        destination: evt.target.value
+        destination: {
+          name: currentDestination.name,
+          description: currentDestination.description,
+          photos: currentDestination.photos
+        }
       });
     };
 
@@ -394,7 +395,7 @@ export default class EventEdit extends SmartView {
   _changePriceInputHandler(evt) {
     const callback = () => {
       this.updateData({
-        price: evt.target.value
+        price: +evt.target.value
       }, true);
     };
 

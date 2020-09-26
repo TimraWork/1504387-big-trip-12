@@ -2,7 +2,7 @@ import {MAX_OFFERS} from '../const.js';
 import AbstractView from './abstract.js';
 
 import {formatTime, formatDateTime} from '../utils/common.js';
-import {formatEventType, getEventDuration, getOffersByData} from '../utils/event.js';
+import {formatEventType, getEventDuration} from '../utils/event.js';
 
 const createOfferTemplate = (label, price) => {
   return `<li class="event__offer">
@@ -27,7 +27,7 @@ const createOffersTemplate = (offers) => {
   return ``;
 };
 
-const createEventTemplate = (event, dataOffers) => {
+const createEventTemplate = (event) => {
   const {type, destination, dateRange, price, offers} = event;
 
   const typeWithLabel = formatEventType(type);
@@ -38,7 +38,6 @@ const createEventTemplate = (event, dataOffers) => {
   const duration = getEventDuration(dateRange);
 
   const offersTemplate = createOffersTemplate(offers);
-  // const offersTemplate = createOffersTemplate(getOffersByData(offers, dataOffers));
 
   return `<li class="trip-events__item">
             <div class="event">

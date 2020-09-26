@@ -89,24 +89,14 @@ export const getOffers = (dataOffers, type) => {
   return dataOffers;
 };
 
-export const getOffersByData = (offers, dataOffers) => {
-  const filteredDataOffers = [];
-
-  // offers.forEach((offer) =>{
-  //   filteredDataOffers.push(dataOffers.find((element) => element.name === offer));
-  // });
-
-  return filteredDataOffers;
-};
-
 export const getDestinationByData = (destination, dataDestinations) => {
   return dataDestinations.find((element) => element.name === destination);
 };
 
-export const getEventsTotalPrice = (events, dataOffers) => {
+export const getEventsTotalPrice = (events) => {
   const totalSum = events.reduce((accumulator, current)=>{
 
-    const sumOffers = getOffersByData(current.offers, dataOffers)
+    const sumOffers = current.offers
       .map((offer)=>offer.price)
       .reduce((acc, curr) => (acc + curr), 0);
 
@@ -115,7 +105,6 @@ export const getEventsTotalPrice = (events, dataOffers) => {
 
   return totalSum;
 };
-
 
 export const validateDestination = (destinationInput, eventEditForm, destinations, callback) => {
   const isDataCorrect = destinations.map((destination) => destination.name).includes(destinationInput.value);

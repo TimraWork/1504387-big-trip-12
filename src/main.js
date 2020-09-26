@@ -34,16 +34,8 @@ const filterPresenter = new FilterPresenter(titleFilter, filterModel, eventsMode
 
 tripPresenter.init();
 infoPresenter.init();
-menuPresenter.init();
 filterPresenter.init();
-
-api.getEvents()
-  .then((events) => {
-    eventsModel.setEvents(UpdateType.INIT, events);
-  })
-  .catch(() => {
-    eventsModel.setEvents(UpdateType.INIT, []);
-  });
+menuPresenter.init();
 
 api.getDestinations()
   .then((destinations) => {
@@ -57,7 +49,15 @@ api.getOffers()
   .then((offers) => {
     offersModel.setOffers(UpdateType.INIT, offers);
   })
+  .then(() => {
+    api.getEvents()
+      .then((events) => {
+        eventsModel.setEvents(UpdateType.INIT, events);
+      })
+      .catch(() => {
+        eventsModel.setEvents(UpdateType.INIT, []);
+      });
+  })
   .catch(() => {
     offersModel.setOffers(UpdateType.INIT, []);
   });
-
