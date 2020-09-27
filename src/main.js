@@ -73,8 +73,6 @@ api.getOffers()
 
 
 window.addEventListener(`online`, () => {
-  console.log(`online = `);
-  alert(`offline`);
   document.title = document.title.replace(` [offline]`, ``);
   apiWithProvider.sync();
 });
