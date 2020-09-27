@@ -53,7 +53,6 @@ export default class Provider {
     if (this._isOnline()) {
       return this._api.addEvent(event)
         .then((newEvent) => {
-          console.log(`addEvent = `, newEvent.id);
           this._store.setItem(newEvent.id, EventsModel.adaptToServer(newEvent));
           return newEvent;
         });
@@ -102,7 +101,6 @@ export default class Provider {
   }
 
   _isOnline() {
-    console.log(window.navigator.onLine);
     return window.navigator.onLine;
   }
 }
