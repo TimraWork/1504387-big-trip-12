@@ -1,4 +1,4 @@
-import {EVENT_TYPE, MAX_INFO_CITIES, TEXT_DIVIDER, OFFERS_DATA} from '../const.js';
+import {EventType, MAX_INFO_CITIES, TEXT_DIVIDER} from '../const.js';
 import {formatMonthDate, formatDate} from './common.js';
 import moment from "moment";
 
@@ -7,8 +7,8 @@ export const capitalizeFirstLetter = (string) => {
 };
 
 export const formatEventType = (type) => {
-  const labels = EVENT_TYPE.joinLabels;
-  const transfers = EVENT_TYPE.transfers.map((transfer) => transfer.name);
+  const labels = EventType.JOIN_LABELS;
+  const transfers = EventType.TRANSFERS.map((transfer) => transfer.NAME);
   const label = transfers.includes(type) ? labels[0] : labels[1];
 
   return `${capitalizeFirstLetter(type)}  ${label}`;
@@ -75,10 +75,6 @@ export const sortPrice = (eventA, eventB) => {
   return eventB.price - eventA.price;
 };
 
-export const getOffersByType = (type) => {
-  return OFFERS_DATA.filter((offer) => offer.types.includes(type));
-};
-
 export const getOffers = (dataOffers, type) => {
   if (dataOffers.length) {
     const filteredDataOffers = dataOffers.filter((offer) => offer.type === type);
@@ -89,12 +85,8 @@ export const getOffers = (dataOffers, type) => {
   return dataOffers;
 };
 
-export const getDestinationByData = (destination, dataDestinations) => {
-  return dataDestinations.find((element) => element.name === destination);
-};
-
 export const getEventsTotalPrice = (events) => {
-  const totalSum = events.reduce((accumulator, current)=>{
+  const totalSum = events.reduce((accumulator, current) => {
 
     const sumOffers = current.offers
       .map((offer)=>offer.price)
@@ -123,6 +115,7 @@ export const validateDestination = (destinationInput, eventEditForm, destination
 
 export const validatePrice = (priceInput, eventEditForm, callback) => {
   priceInput.setCustomValidity(``);
+
   const isStartedWithoutZero = /^(?:[1-9][0-9]*|0)$/.test(priceInput.value);
 
   if (priceInput.validity.valueMissing || !priceInput.checkValidity() || !isStartedWithoutZero) {

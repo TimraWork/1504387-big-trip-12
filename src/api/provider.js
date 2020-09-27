@@ -26,6 +26,7 @@ export default class Provider {
 
   getEvents() {
     if (this._isOnline()) {
+
       return this._api.getEvents()
         .then((events) => {
           const items = createStoreStructure(events.map(EventsModel.adaptToServer));
@@ -41,6 +42,7 @@ export default class Provider {
 
   getOffers() {
     if (this._isOnline()) {
+
       return this._api.getOffers()
         .then((offers) => {
           this._store.setItems(offers.map(OffersModel.adaptToServer));
@@ -56,6 +58,7 @@ export default class Provider {
 
   getDestinations() {
     if (this._isOnline()) {
+
       return this._api.getDestinations()
         .then((destinations) => {
           this._store.setItems(destinations.map(DestinationsModel.adaptToServer));
@@ -71,6 +74,7 @@ export default class Provider {
 
   updateEvent(event) {
     if (this._isOnline()) {
+
       return this._api.updateEvent(event)
         .then((updatedEvent) => {
           this._store.setItem(updatedEvent.id, EventsModel.adaptToServer(updatedEvent));
@@ -86,6 +90,7 @@ export default class Provider {
 
   addEvent(event) {
     if (this._isOnline()) {
+
       return this._api.addEvent(event)
         .then((newEvent) => {
           this._store.setItem(newEvent.id, EventsModel.adaptToServer(newEvent));

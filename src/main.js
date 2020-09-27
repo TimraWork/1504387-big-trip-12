@@ -11,7 +11,7 @@ import OffersModel from "./model/offers.js";
 import DestinationsModel from "./model/destinations.js";
 import FilterModel from "./model/filter.js";
 
-import Api from "./api/index.js";
+import Api from "./api/api.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
@@ -21,14 +21,14 @@ const STORE_PREFIX = `bigtrip-localstorage`;
 const STORE_VER = `v12`;
 const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
-const api = new Api(END_POINT, AUTHORIZATION);
-const store = new Store(STORE_NAME, window.localStorage);
-const apiWithProvider = new Provider(api, store);
-
 const infoContainer = document.querySelector(`.trip-main`);
 const eventsContainer = document.querySelector(`.trip-events`);
 const titleMenu = infoContainer.querySelector(`h2:nth-of-type(1)`);
 const titleFilter = infoContainer.querySelector(`h2:nth-of-type(2)`);
+
+const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const eventsModel = new EventsModel();
 const offersModel = new OffersModel();
@@ -72,12 +72,7 @@ apiWithProvider.getOffers()
   });
 
 window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`)
-      .then(() => {
-        console.log(`ServiceWorker available`); // eslint-disable-line
-      }).catch(() => {
-        console.error(`ServiceWorker isn't available`); // eslint-disable-line
-      });
+  navigator.serviceWorker.register(`/sw.js`);
 });
 
 window.addEventListener(`online`, () => {
