@@ -62,11 +62,21 @@ export default class Api {
   }
 
   getOffers() {
-    return this._load({url: `/offers`})
+    return this._load({url: `offers`})
       .then(Api.toJSON)
       .then((offers) => {
         return offers.map(OffersModel.adaptToClient);
       });
+  }
+
+  sync(data) {
+    return this._load({
+      url: `points/sync`,
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    })
+      .then(Api.toJSON);
   }
 
   _load({

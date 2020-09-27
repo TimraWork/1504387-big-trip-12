@@ -12,10 +12,18 @@ import DestinationsModel from "./model/destinations.js";
 import FilterModel from "./model/filter.js";
 
 import Api from "./api/index.js";
+import Store from "./api/store.js";
+import Provider from "./api/provider.js";
 
 const AUTHORIZATION = `Basic rTf9595iy29889a`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+const STORE_PREFIX = `bigtrip-localstorage`;
+const STORE_VER = `v12`;
+const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
+
 const api = new Api(END_POINT, AUTHORIZATION);
+const store = new Store(STORE_NAME, window.localStorage);
+const apiWithProvider = new Provider(api, store);
 
 const infoContainer = document.querySelector(`.trip-main`);
 const eventsContainer = document.querySelector(`.trip-events`);
@@ -27,7 +35,7 @@ const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
-const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel, api);
+const tripPresenter = new TripPresenter(eventsContainer, eventsModel, offersModel, destinationsModel, filterModel, apiWithProvider);
 const statisticsPresenter = new StatisticsPresenter(eventsContainer, eventsModel);
 const infoPresenter = new InfoPresenter(infoContainer, eventsModel, offersModel);
 const menuPresenter = new MenuPresenter(infoContainer, titleMenu, tripPresenter, statisticsPresenter);
@@ -51,7 +59,7 @@ api.getOffers()
     offersModel.setOffers(UpdateType.INIT, offers);
   })
   .then(() => {
-    api.getEvents()
+    apiWithProvider.getEvents()
       .then((events) => {
         eventsModel.setEvents(UpdateType.INIT, events);
       })
@@ -62,3 +70,15 @@ api.getOffers()
   .catch(() => {
     offersModel.setOffers(UpdateType.INIT, []);
   });
+
+
+window.addEventListener(`online`, () => {
+  console.log(`online = `);
+  alert(`offline`);
+  document.title = document.title.replace(` [offline]`, ``);
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, () => {
+  document.title += ` [offline]`;
+});
