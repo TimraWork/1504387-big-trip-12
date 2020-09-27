@@ -1,12 +1,12 @@
-import {EVENT_TYPE} from "../const";
+import {EventType} from "../const";
 import moment from "moment";
 
-const EVENT_TYPES = [
-  ...EVENT_TYPE.transfers,
-  ...EVENT_TYPE.activities
+const EventTypes = [
+  ...EventType.TRANSFERS,
+  ...EventType.ACTIVITIES
 ];
 
-const TRANSFERS = EVENT_TYPE.transfers.map((event) => event.name);
+const TRANSFERS = EventType.TRANSFERS.map((event) => event.NAME);
 
 const getEventsUniqueTypes = (events) => {
   return [...new Set(events.map((event) => event.type))];
@@ -40,18 +40,18 @@ export const getEventsTypesPrices = (events) => {
 
 export const getEventsTypesLabels = (events) => {
   const labels = getEventsUniqueTypes(events)
-    .map((type) => EVENT_TYPES
-      .find((label)=>label.name === type)
-        .label);
+    .map((type) => EventTypes
+      .find((label) => label.NAME === type)
+        .LABEL);
 
   return labels;
 };
 
 export const getTransportsLabels = (events) => {
   const transportLabels = getEventsUniqueTransports(events)
-    .map((type) => EVENT_TYPE.transfers
-      .find((label) => label.name === type)
-        .label);
+    .map((type) => EventType.TRANSFERS
+      .find((transfer) => transfer.NAME === type)
+        .LABEL);
 
   return transportLabels;
 };

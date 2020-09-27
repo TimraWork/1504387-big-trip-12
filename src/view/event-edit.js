@@ -1,5 +1,5 @@
 import SmartView from "./smart.js";
-import {EVENT_TYPE} from '../const.js';
+import {EventType} from '../const.js';
 import {formatDateTime} from '../utils/common.js';
 import {formatEventType, capitalizeFirstLetter, getOffers, validateDestination, validatePrice, validateDate} from '../utils/event.js';
 
@@ -51,16 +51,17 @@ const createEventTypeTemplate = (id, eventType, isDisabled) => {
 
             <div class="event__type-list">
 
-              ${Object.entries(EVENT_TYPE)
+              ${Object.entries(EventType)
                 .slice(0, 2)
                 .map(([typeName, typeValues]) => {
+
                   return `
                       <fieldset class="event__type-group">
                         <legend class="visually-hidden">${typeName}Transfer</legend>
 
                         ${typeValues
                             .map((typeValue) => {
-                              typeValue = typeValue.name;
+                              typeValue = typeValue.NAME;
                               return `<div class="event__type-item">
                                         <input id="event-type-${typeValue}-${id}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${typeValue}" ${eventType === typeValue ? `checked` : `` } ${isDisabled ? `disabled` : ``}>
                                         <label class="event__type-label  event__type-label--${typeValue}" for="event-type-${typeValue}-${id}">${capitalizeFirstLetter(typeValue)}</label>
