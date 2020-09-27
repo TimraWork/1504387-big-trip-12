@@ -46,7 +46,7 @@ infoPresenter.init();
 filterPresenter.init();
 menuPresenter.init();
 
-api.getDestinations()
+apiWithProvider.getDestinations()
   .then((destinations) => {
     destinationsModel.setDestinations(UpdateType.INIT, destinations);
   })
@@ -54,7 +54,7 @@ api.getDestinations()
     destinationsModel.setDestinations(UpdateType.INIT, []);
   });
 
-api.getOffers()
+apiWithProvider.getOffers()
   .then((offers) => {
     offersModel.setOffers(UpdateType.INIT, offers);
   })
@@ -71,6 +71,14 @@ api.getOffers()
     offersModel.setOffers(UpdateType.INIT, []);
   });
 
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+      .then(() => {
+        console.log(`ServiceWorker available`); // eslint-disable-line
+      }).catch(() => {
+        console.error(`ServiceWorker isn't available`); // eslint-disable-line
+      });
+});
 
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);

@@ -1,4 +1,4 @@
-const CACHE_PREFIX = `taskmanager-cache`;
+const CACHE_PREFIX = `bigtrip-cache`;
 const CACHE_VER = `v12`;
 const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VER}`;
 
@@ -13,12 +13,10 @@ self.addEventListener(`install`, (evt) => {
             `/`,
             `/index.html`,
             `/bundle.js`,
-            `/css/normalize.css`,
             `/css/style.css`,
             `/img/header-bg.png`,
             `/img/header-bg@2x.png`,
             `/img/logo.png`,
-            `/img/plug.png`,
             `/img/icons/bus.png`,
             `/img/icons/check-in.png`,
             `/img/icons/drive.png`,

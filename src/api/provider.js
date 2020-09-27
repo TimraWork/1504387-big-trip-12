@@ -1,5 +1,7 @@
 import {nanoid} from "nanoid";
 import EventsModel from "../model/events.js";
+import OffersModel from "../model/offers.js";
+import DestinationsModel from "../model/destinations.js";
 
 const getSyncedEvents = (items) => {
   return items.filter(({success}) => success)
@@ -8,9 +10,11 @@ const getSyncedEvents = (items) => {
 
 const createStoreStructure = (items) => {
   return items.reduce((acc, current) => {
-    return Object.assign({}, acc, {
+    const storeStructure = Object.assign({}, acc, {
       [current.id]: current,
     });
+    // console.log(`current = `, current);
+    return storeStructure;
   }, {});
 };
 
@@ -33,6 +37,34 @@ export default class Provider {
     const storeEvents = Object.values(this._store.getItems());
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));
+  }
+
+  getOffers() {
+    if (this._isOnline()) {
+      return this._api.getOffers()
+        .then((offers) => {
+          this._store.setItems(offers.map(OffersModel.adaptToServer));
+          return offers;
+        });
+    }
+
+    const storeOffers = Object.values(this._store.getItems());
+
+    return Promise.resolve(storeOffers.map(OffersModel.adaptToClient));
+  }
+
+  getDestinations() {
+    if (this._isOnline()) {
+      return this._api.getDestinations()
+        .then((destinations) => {
+          this._store.setItems(destinations.map(DestinationsModel.adaptToServer));
+          return destinations;
+        });
+    }
+
+    const storeDestinations = Object.values(this._store.getItems());
+
+    return Promise.resolve(storeDestinations.map(DestinationsModel.adaptToClient));
   }
 
   updateEvent(event) {
@@ -58,9 +90,8 @@ export default class Provider {
         });
     }
 
-    // На случай локального создания данных мы должны сами создать `id`.
-    // Иначе наша модель будет не полной, и это может привнести баги
     const localNewEventId = nanoid();
+
     const localNewEvent = Object.assign({}, event, {id: localNewEventId});
 
     this._store.setItem(localNewEvent.id, EventsModel.adaptToServer(localNewEvent));
@@ -85,12 +116,9 @@ export default class Provider {
 
       return this._api.sync(storeEvents)
         .then((response) => {
-          // Забираем из ответа синхронизированные задачи
           const createdEvents = getSyncedEvents(response.created);
           const updatedEvents = getSyncedEvents(response.updated);
 
-          // Добавляем синхронизированные задачи в хранилище.
-          // Хранилище должно быть актуальным в любой момент.
           const items = createStoreStructure([...createdEvents, ...updatedEvents]);
 
           this._store.setItems(items);

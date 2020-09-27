@@ -50,7 +50,7 @@ export default class Api {
 
   deleteEvent(event) {
     return this._load({
-      url: `points/${event.id}`,
+      url: `/points/${event.id}`,
       method: Method.DELETE
     });
   }
@@ -64,14 +64,12 @@ export default class Api {
   getOffers() {
     return this._load({url: `offers`})
       .then(Api.toJSON)
-      .then((offers) => {
-        return offers.map(OffersModel.adaptToClient);
-      });
+      .then((offers) => offers.map(OffersModel.adaptToClient));
   }
 
   sync(data) {
     return this._load({
-      url: `points/sync`,
+      url: `/points/sync`,
       method: Method.POST,
       body: JSON.stringify(data),
       headers: new Headers({"Content-Type": `application/json`})
