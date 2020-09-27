@@ -1,22 +1,5 @@
 import moment from "moment";
 
-export const getRandomInteger = (min, max, num = 1) => {
-  return Math.floor(Math.floor(Math.random() * (max - min + 1) + min) / num) * num;
-};
-
-export const shuffleArray = (array) => {
-  for (let i = array.length - 1; i > 0; i--) {
-    let j = Math.floor(Math.random() * (i + 1));
-    let temp = array[i];
-    array[i] = array[j];
-    array[j] = temp;
-  }
-
-  return array;
-};
-
-export const generateId = () => Date.now() + parseInt(Math.random() * 10000, 10);
-
 export const formatDate = (date) => {
   return moment(date).format(`L`);
 };
