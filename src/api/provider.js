@@ -13,7 +13,7 @@ const createStoreStructure = (items) => {
     const storeStructure = Object.assign({}, acc, {
       [current.id]: current,
     });
-    // console.log(`current = `, current);
+
     return storeStructure;
   }, {});
 };
@@ -44,6 +44,7 @@ export default class Provider {
       return this._api.getOffers()
         .then((offers) => {
           this._store.setItems(offers.map(OffersModel.adaptToServer));
+
           return offers;
         });
     }
@@ -58,6 +59,7 @@ export default class Provider {
       return this._api.getDestinations()
         .then((destinations) => {
           this._store.setItems(destinations.map(DestinationsModel.adaptToServer));
+
           return destinations;
         });
     }
@@ -72,6 +74,7 @@ export default class Provider {
       return this._api.updateEvent(event)
         .then((updatedEvent) => {
           this._store.setItem(updatedEvent.id, EventsModel.adaptToServer(updatedEvent));
+
           return updatedEvent;
         });
     }
@@ -86,6 +89,7 @@ export default class Provider {
       return this._api.addEvent(event)
         .then((newEvent) => {
           this._store.setItem(newEvent.id, EventsModel.adaptToServer(newEvent));
+
           return newEvent;
         });
     }
