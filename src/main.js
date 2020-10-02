@@ -46,30 +46,21 @@ infoPresenter.init();
 filterPresenter.init();
 menuPresenter.init();
 
-apiWithProvider.getDestinations()
-  .then((destinations) => {
-    destinationsModel.setDestinations(UpdateType.INIT, destinations);
-  })
-  .catch(() => {
-    destinationsModel.setDestinations(UpdateType.INIT, []);
-  });
-
-apiWithProvider.getOffers()
-  .then((offers) => {
-    offersModel.setOffers(UpdateType.INIT, offers);
-  })
-  .then(() => {
-    apiWithProvider.getEvents()
-      .then((events) => {
-        eventsModel.setEvents(UpdateType.INIT, events);
-      })
-      .catch(() => {
-        eventsModel.setEvents(UpdateType.INIT, []);
-      });
-  })
-  .catch(() => {
-    offersModel.setOffers(UpdateType.INIT, []);
-  });
+Promise.all([
+  apiWithProvider.getDestinations(),
+  apiWithProvider.getOffers(),
+  apiWithProvider.getEvents()
+])
+.then(([offers, destinations, events]) => {
+  offersModel.setOffers(UpdateType.INIT, offers);
+  destinationsModel.setDestinations(UpdateType.INIT, destinations);
+  eventsModel.setEvents(UpdateType.INIT, events);
+})
+.catch(() => {
+  offersModel.setOffers(UpdateType.INIT, []);
+  destinationsModel.setDestinations(UpdateType.INIT, []);
+  eventsModel.setEvents(UpdateType.INIT, []);
+});
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`);
