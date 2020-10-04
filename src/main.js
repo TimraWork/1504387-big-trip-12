@@ -1,3 +1,5 @@
+
+import {nanoid} from "nanoid";
 import {UpdateType} from './const.js';
 
 import TripPresenter from "./presenter/trip.js";
@@ -15,7 +17,7 @@ import Api from "./api/api.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
-const AUTHORIZATION = `Basic rTf0RS5Ty298F9a`;
+const AUTHORIZATION = `Basic ${nanoid()}`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const infoContainer = document.querySelector(`.trip-main`);
@@ -43,20 +45,24 @@ infoPresenter.init();
 filterPresenter.init();
 menuPresenter.init();
 
+console.log(api.getEvents());
+
 Promise.all([
   apiWithProvider.getDestinations(),
   apiWithProvider.getOffers(),
   apiWithProvider.getEvents()
 ])
-.then(([offers, destinations, events]) => {
-  offersModel.setOffers(UpdateType.INIT, offers);
-  destinationsModel.setDestinations(UpdateType.INIT, destinations);
+.then(([destinations, offers, events]) => {
+  destinationsModel.setDestinations(destinations);
+  offersModel.setOffers(offers);
   eventsModel.setEvents(UpdateType.INIT, events);
-})
-.catch(() => {
-  offersModel.setOffers(UpdateType.INIT, []);
-  destinationsModel.setDestinations(UpdateType.INIT, []);
-  eventsModel.setEvents(UpdateType.INIT, []);
+
+  console.log(`destinations = `, destinations);
+  console.log(`offers = `, offers);
+  console.log(`events = `, events);
+
+  // console.log(`[offers, destinations, events] = `, [events]);
+
 });
 
 window.addEventListener(`load`, () => {

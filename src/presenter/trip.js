@@ -75,7 +75,7 @@ export default class Trip {
   }
 
   _getTripDays(currentSortType) {
-    return currentSortType === SortType.DEFAULT ? getTripDays(this._getEvents()) : undefined;
+    return currentSortType === SortType.DEFAULT ? getTripDays(this._events) : undefined;
   }
 
   _getOffers() {
@@ -150,11 +150,11 @@ export default class Trip {
         break;
       case UpdateType.MINOR:
         this._clearTrip();
-        this._renderTrip();
+        // this._renderTrip();
         break;
       case UpdateType.MAJOR:
         this._clearTrip({resetSortType: true});
-        this._renderTrip();
+        // this._renderTrip();
         break;
       case UpdateType.INIT:
         this._isLoading = false;
@@ -209,12 +209,11 @@ export default class Trip {
     const eventsListNode = this._createDaysNode();
 
     this._tripDayNodes.forEach((dayNode) => {
-
       this._dayNode = dayNode;
 
       const filteredEventsByDay = dayNode.dataset.day ?
-        filterEventsByDays(this._getEvents(), dayNode.dataset.day) :
-        this._getEvents();
+        filterEventsByDays(this._events, dayNode.dataset.day) :
+        this._events;
 
       filteredEventsByDay.forEach((event) => {
         this._createEventNode(event, this._dayNode);

@@ -32,20 +32,18 @@ export default class Provider {
   }
 
   getEvents() {
-    console.log(` STORE_NAMES = `, STORE_NAMES);
-
     if (this._isOnline()) {
 
       return this._api.getEvents()
         .then((events) => {
           const items = createStoreStructure(events.map(EventsModel.adaptToServer));
           this._store.setItems(STORE_NAMES[0], items);
-
+          // console.log(`events`, events);
           return events;
         });
     }
 
-
+    console.log(`isOffline`);
     const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));
@@ -58,7 +56,7 @@ export default class Provider {
         .then((offers) => {
           const items = createStoreStructure(offers.map(OffersModel.adaptToServer));
           this._store.setItems(STORE_NAMES[1], items);
-
+          // console.log(`offers`, offers);
           return offers;
         });
     }
@@ -75,7 +73,7 @@ export default class Provider {
         .then((destinations) => {
           const items = createStoreStructure(destinations.map(DestinationsModel.adaptToServer));
           this._store.setItems(STORE_NAMES[2], items);
-
+          // console.log(`destinations`, destinations);
           return destinations;
         });
     }
