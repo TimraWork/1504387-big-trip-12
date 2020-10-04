@@ -91,13 +91,17 @@ const createDestinationTemplate = (destination) => {
 };
 
 const createDestinationsTemplate = (id, destinations, isDisabled) => {
-  return `<datalist id="destination-list-${id}">
-            ${destinations
-              .map((destination)=>{
-                return `<option value="${destination.name}" ${isDisabled ? `disabled` : ``}>${destination.name}</option>`;
-              })
-              .join(``)}
-          </datalist>`;
+  console.log(`destinations =`, destinations);
+  if (destinations) {
+    return `<datalist id="destination-list-${id}">
+              ${destinations
+                .map((destination)=>{
+                  return `<option value="${destination.name}" ${isDisabled ? `disabled` : ``}>${destination.name}</option>`;
+                })
+                .join(``)}
+            </datalist>`;
+  }
+  return ``;
 };
 
 const createOfferItemTemplate = (id, offer, isChecked) => {
@@ -137,6 +141,7 @@ const createOffersTemplate = (id = 1, offers, dataOffers, type) => {
 };
 
 const createEventEditTemplate = (data, dataOffers, dataDestinations, isNewEvent) => {
+  console.log(dataOffers, dataDestinations);
   const {
     id,
     type,
@@ -167,7 +172,7 @@ const createEventEditTemplate = (data, dataOffers, dataDestinations, isNewEvent)
 
               <div class="event__field-group  event__field-group--destination">
                 <label class="event__label  event__type-output" for="event-destination-${id}">${typeWithLabel}</label>
-                <input required="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}" ${isDisabled ? `disabled` : ``}>
+                <input readrequired="required" autocomplete="off" class="event__input  event__input--destination" id="event-destination-${id}" type="text" name="event-destination" value="${destination.name}" list="destination-list-${id}" ${isDisabled ? `disabled` : ``}>
                 ${destinationsTemplate}
               </div>
 

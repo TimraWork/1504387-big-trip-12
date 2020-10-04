@@ -76,13 +76,13 @@ export const sortPrice = (eventA, eventB) => {
 };
 
 export const getOffers = (dataOffers, type) => {
-  if (dataOffers.length) {
+  if (dataOffers) {
     const filteredDataOffers = dataOffers.filter((offer) => offer.type === type);
     const [offersObj] = filteredDataOffers;
 
     return offersObj.offers;
   }
-  return dataOffers;
+  return [];
 };
 
 export const getEventsTotalPrice = (events) => {

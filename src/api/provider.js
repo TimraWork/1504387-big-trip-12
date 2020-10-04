@@ -43,7 +43,7 @@ export default class Provider {
         });
     }
 
-    console.log(`isOffline`);
+    // console.log(`isOffline`);
     const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));

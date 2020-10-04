@@ -150,11 +150,11 @@ export default class Trip {
         break;
       case UpdateType.MINOR:
         this._clearTrip();
-        // this._renderTrip();
+        this._renderTrip();
         break;
       case UpdateType.MAJOR:
         this._clearTrip({resetSortType: true});
-        // this._renderTrip();
+        this._renderTrip();
         break;
       case UpdateType.INIT:
         this._isLoading = false;
@@ -235,9 +235,6 @@ export default class Trip {
   }
 
   _renderEvents() {
-    this._tripOffers = this._getOffers();
-    this._tripDestinations = this._getDestinations();
-
     render(this._tripContainer, this._createEventsListNode(), RenderPosition.BEFORE_END);
   }
 
@@ -273,6 +270,9 @@ export default class Trip {
       this._renderLoading();
       return;
     }
+
+    this._tripOffers = this._getOffers();
+    this._tripDestinations = this._getDestinations();
 
     const eventCount = this._getEvents().length;
 
