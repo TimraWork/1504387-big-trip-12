@@ -3,15 +3,22 @@ import EventsModel from "../model/events.js";
 import OffersModel from "../model/offers.js";
 import DestinationsModel from "../model/destinations.js";
 
+const STORE_NAME = `bigtrip`;
+const STORE_PREFIXES = [`events`, `offers`, `destinations`];
+const STORE_VER = `v12`;
+const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
+
 const getSyncedEvents = (items) => {
   return items.filter(({success}) => success)
     .map(({payload}) => payload.event);
 };
 
 const createStoreStructure = (items) => {
-  return items.reduce((acc, current) => {
+  return items.reduce((acc, current, index) => {
+    // console.log(`current = `, [current.id]);
+    const currentId = current.id || index;
     const storeStructure = Object.assign({}, acc, {
-      [current.id]: current,
+      [currentId]: current,
     });
 
     return storeStructure;
@@ -25,17 +32,21 @@ export default class Provider {
   }
 
   getEvents() {
+    console.log(` STORE_NAMES = `, STORE_NAMES);
+
     if (this._isOnline()) {
 
       return this._api.getEvents()
         .then((events) => {
           const items = createStoreStructure(events.map(EventsModel.adaptToServer));
-          this._store.setItems(items);
+          this._store.setItems(STORE_NAMES[0], items);
+
           return events;
         });
     }
 
-    const storeEvents = Object.values(this._store.getItems());
+
+    const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));
   }
@@ -45,13 +56,14 @@ export default class Provider {
 
       return this._api.getOffers()
         .then((offers) => {
-          this._store.setItems(offers.map(OffersModel.adaptToServer));
+          const items = createStoreStructure(offers.map(OffersModel.adaptToServer));
+          this._store.setItems(STORE_NAMES[1], items);
 
           return offers;
         });
     }
 
-    const storeOffers = Object.values(this._store.getItems());
+    const storeOffers = Object.values(this._store.getItems(STORE_NAMES[1]));
 
     return Promise.resolve(storeOffers.map(OffersModel.adaptToClient));
   }
@@ -61,13 +73,14 @@ export default class Provider {
 
       return this._api.getDestinations()
         .then((destinations) => {
-          this._store.setItems(destinations.map(DestinationsModel.adaptToServer));
+          const items = createStoreStructure(destinations.map(DestinationsModel.adaptToServer));
+          this._store.setItems(STORE_NAMES[2], items);
 
           return destinations;
         });
     }
 
-    const storeDestinations = Object.values(this._store.getItems());
+    const storeDestinations = Object.values(this._store.getItems(STORE_NAMES[2]));
 
     return Promise.resolve(storeDestinations.map(DestinationsModel.adaptToClient));
   }

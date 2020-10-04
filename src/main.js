@@ -15,11 +15,8 @@ import Api from "./api/api.js";
 import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
-const AUTHORIZATION = `Basic rTf0595iy29889a`;
+const AUTHORIZATION = `Basic rTf0RS5Ty298F9a`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
-const STORE_PREFIX = `bigtrip-localstorage`;
-const STORE_VER = `v12`;
-const STORE_NAME = `${STORE_PREFIX}-${STORE_VER}`;
 
 const infoContainer = document.querySelector(`.trip-main`);
 const eventsContainer = document.querySelector(`.trip-events`);
@@ -27,7 +24,7 @@ const titleMenu = infoContainer.querySelector(`h2:nth-of-type(1)`);
 const titleFilter = infoContainer.querySelector(`h2:nth-of-type(2)`);
 
 const api = new Api(END_POINT, AUTHORIZATION);
-const store = new Store(STORE_NAME, window.localStorage);
+const store = new Store(window.localStorage);
 const apiWithProvider = new Provider(api, store);
 
 const eventsModel = new EventsModel();
