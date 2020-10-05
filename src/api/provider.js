@@ -9,8 +9,9 @@ const STORE_VER = `v12`;
 const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
 
 const getSyncedEvents = (items) => {
+  console.log(`items = `, items);
   return items.filter(({success}) => success)
-    .map(({payload}) => payload.event);
+    .map(({payload}) => payload.point);
 };
 
 const createStoreStructure = (items) => {
@@ -132,7 +133,7 @@ export default class Provider {
 
   sync() {
     if (this._isOnline()) {
-      const storeEvents = Object.values(this._store.getItems());
+      const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
 
       return this._api.sync(storeEvents)
         .then((response) => {

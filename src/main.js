@@ -18,7 +18,7 @@ import Store from "./api/store.js";
 import Provider from "./api/provider.js";
 
 // const AUTHORIZATION = `Basic ${nanoid()}`;
-const AUTHORIZATION = `Basic Eo0w590ik29889a`;
+const AUTHORIZATION = `Basic Eo0w590ik29889F`;
 const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
 
 const infoContainer = document.querySelector(`.trip-main`);
@@ -58,9 +58,9 @@ Promise.all([
   offersModel.setOffers(offers);
   eventsModel.setEvents(UpdateType.INIT, events);
 
-  console.log(`destinations = `, destinations);
-  console.log(`offers = `, offers);
-  console.log(`events = `, events);
+  // console.log(`destinations = `, destinations);
+  // console.log(`offers = `, offers);
+  // console.log(`events = `, events);
 
 });
 

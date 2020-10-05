@@ -1,3 +1,8 @@
+const STORE_NAME = `bigtrip`;
+const STORE_PREFIXES = [`events`, `offers`, `destinations`];
+const STORE_VER = `v12`;
+const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
+
 export default class Store {
   constructor(storage) {
     this._storage = storage;
@@ -19,25 +24,28 @@ export default class Store {
   }
 
   setItem(key, value) {
-    const store = this.getItems(key);
+    const store = this.getItems(STORE_NAMES[0]);
 
     this._storage.setItem(
-        key,
+        STORE_NAMES[0],
         JSON.stringify(
-            Object.assign({}, store, {
-              [key]: value
-            })
+            Object.assign(
+                {},
+                store,
+                {
+                  [key]: value
+                })
         )
     );
   }
 
   removeItem(key) {
-    const store = this.getItems(key);
+    const store = this.getItems(STORE_NAMES[0]);
 
     delete store[key];
 
     this._storage.setItem(
-        key,
+        STORE_NAMES[0],
         JSON.stringify(store)
     );
   }

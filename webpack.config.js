@@ -12,7 +12,7 @@ module.exports = {
   devServer: {
     contentBase: path.join(__dirname, 'public'),
     watchContentBase: true,
-    port: 2222
+    port: 2224
   },
   module: {
     rules: [

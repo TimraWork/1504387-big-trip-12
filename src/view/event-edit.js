@@ -91,7 +91,6 @@ const createDestinationTemplate = (destination) => {
 };
 
 const createDestinationsTemplate = (id, destinations, isDisabled) => {
-  console.log(`destinations =`, destinations);
   if (destinations) {
     return `<datalist id="destination-list-${id}">
               ${destinations
@@ -141,7 +140,6 @@ const createOffersTemplate = (id = 1, offers, dataOffers, type) => {
 };
 
 const createEventEditTemplate = (data, dataOffers, dataDestinations, isNewEvent) => {
-  console.log(dataOffers, dataDestinations);
   const {
     id,
     type,
