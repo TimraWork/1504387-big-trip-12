@@ -2,6 +2,9 @@ import EventsModel from "../model/events.js";
 import DestinationsModel from "../model/destinations.js";
 import OffersModel from "../model/offers.js";
 
+const AUTHORIZATION = `Basic Eo0w590ik29889F`;
+const END_POINT = `https://12.ecmascript.pages.academy/big-trip`;
+
 const Method = {
   GET: `GET`,
   PUT: `PUT`,
@@ -15,9 +18,9 @@ const SuccessHTTPStatusRange = {
 };
 
 export default class Api {
-  constructor(endPoint, authorization) {
-    this._endPoint = endPoint;
-    this._authorization = authorization;
+  constructor() {
+    this._endPoint = END_POINT;
+    this._authorization = AUTHORIZATION;
   }
 
   getEvents() {

@@ -26,12 +26,10 @@ export default class EventNewButton extends AbstractView {
   }
 
   setDisabled() {
-    // this.getElement().removeAttribute(`disabled`, `true`);
     document.querySelector(`.trip-main__event-add-btn`).setAttribute(`disabled`, `true`);
   }
 
   setEnabled() {
-    // this.getElement().removeAttribute(`disabled`, `true`);
     document.querySelector(`.trip-main__event-add-btn`).removeAttribute(`disabled`);
   }
 }

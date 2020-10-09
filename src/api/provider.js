@@ -9,18 +9,19 @@ const STORE_VER = `v12`;
 const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
 
 const getSyncedEvents = (items) => {
-  console.log(`items = `, items);
   return items.filter(({success}) => success)
     .map(({payload}) => payload.point);
 };
 
 const createStoreStructure = (items) => {
   return items.reduce((acc, current, index) => {
-    // console.log(`current = `, [current.id]);
     const currentId = current.id || index;
-    const storeStructure = Object.assign({}, acc, {
-      [currentId]: current,
-    });
+    const storeStructure = Object.assign(
+        {},
+        acc,
+        {
+          [currentId]: current,
+        });
 
     return storeStructure;
   }, {});
@@ -39,12 +40,11 @@ export default class Provider {
         .then((events) => {
           const items = createStoreStructure(events.map(EventsModel.adaptToServer));
           this._store.setItems(STORE_NAMES[0], items);
-          // console.log(`events`, events);
+
           return events;
         });
     }
 
-    // console.log(`isOffline`);
     const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));
@@ -57,7 +57,7 @@ export default class Provider {
         .then((offers) => {
           const items = createStoreStructure(offers.map(OffersModel.adaptToServer));
           this._store.setItems(STORE_NAMES[1], items);
-          // console.log(`offers`, offers);
+
           return offers;
         });
     }
@@ -74,7 +74,7 @@ export default class Provider {
         .then((destinations) => {
           const items = createStoreStructure(destinations.map(DestinationsModel.adaptToServer));
           this._store.setItems(STORE_NAMES[2], items);
-          // console.log(`destinations`, destinations);
+
           return destinations;
         });
     }

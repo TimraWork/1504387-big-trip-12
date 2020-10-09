@@ -17,13 +17,8 @@ export default class Offers extends Observer {
   static adaptToClient(offer) {
     const adaptedOffer = Object.assign(
         {},
-        offer,
-        {
-          // isFavorite: event.is_favorite,
-        }
+        offer
     );
-
-    // delete adaptedOffer.is_favorite;
 
     return adaptedOffer;
   }
@@ -31,13 +26,8 @@ export default class Offers extends Observer {
   static adaptToServer(event) {
     const adaptedOffer = Object.assign(
         {},
-        event,
-        {
-          // "is_favorite": event.isFavorite,
-        }
+        event
     );
-
-    // delete adaptedEvent.isFavorite;
 
     return adaptedOffer;
   }
