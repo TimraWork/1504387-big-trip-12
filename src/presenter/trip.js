@@ -274,7 +274,10 @@ export default class Trip {
     this._tripOffers = this._getOffers();
     this._tripDestinations = this._getDestinations();
 
-    const eventCount = this._getEvents().length;
+
+    this._events = this._getEvents();
+
+    const eventCount = this._events.length;
 
     if (eventCount === 0) {
       this._renderNoEvents();
