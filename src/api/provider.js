@@ -2,11 +2,9 @@ import {nanoid} from "nanoid";
 import EventsModel from "../model/events.js";
 import OffersModel from "../model/offers.js";
 import DestinationsModel from "../model/destinations.js";
+import {STORE_NAMES} from '../const.js';
 
-const STORE_NAME = `bigtrip`;
-const STORE_PREFIXES = [`events`, `offers`, `destinations`];
-const STORE_VER = `v12`;
-const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
+const [EVENTS, OFFERS, DESTINATIONS] = STORE_NAMES;
 
 const getSyncedEvents = (items) => {
   return items.filter(({success}) => success)
@@ -39,13 +37,13 @@ export default class Provider {
       return this._api.getEvents()
         .then((events) => {
           const items = createStoreStructure(events.map(EventsModel.adaptToServer));
-          this._store.setItems(STORE_NAMES[0], items);
+          this._store.setItems(EVENTS, items);
 
           return events;
         });
     }
 
-    const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
+    const storeEvents = Object.values(this._store.getItems(EVENTS));
 
     return Promise.resolve(storeEvents.map(EventsModel.adaptToClient));
   }
@@ -56,13 +54,13 @@ export default class Provider {
       return this._api.getOffers()
         .then((offers) => {
           const items = createStoreStructure(offers.map(OffersModel.adaptToServer));
-          this._store.setItems(STORE_NAMES[1], items);
+          this._store.setItems(OFFERS, items);
 
           return offers;
         });
     }
 
-    const storeOffers = Object.values(this._store.getItems(STORE_NAMES[1]));
+    const storeOffers = Object.values(this._store.getItems(OFFERS));
 
     return Promise.resolve(storeOffers.map(OffersModel.adaptToClient));
   }
@@ -73,13 +71,13 @@ export default class Provider {
       return this._api.getDestinations()
         .then((destinations) => {
           const items = createStoreStructure(destinations.map(DestinationsModel.adaptToServer));
-          this._store.setItems(STORE_NAMES[2], items);
+          this._store.setItems(DESTINATIONS, items);
 
           return destinations;
         });
     }
 
-    const storeDestinations = Object.values(this._store.getItems(STORE_NAMES[2]));
+    const storeDestinations = Object.values(this._store.getItems(DESTINATIONS));
 
     return Promise.resolve(storeDestinations.map(DestinationsModel.adaptToClient));
   }
@@ -133,7 +131,7 @@ export default class Provider {
 
   sync() {
     if (this._isOnline()) {
-      const storeEvents = Object.values(this._store.getItems(STORE_NAMES[0]));
+      const storeEvents = Object.values(this._store.getItems(EVENTS));
 
       return this._api.sync(storeEvents)
         .then((response) => {

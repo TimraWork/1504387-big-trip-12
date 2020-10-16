@@ -1,8 +1,4 @@
-const STORE_NAME = `bigtrip`;
-const STORE_PREFIXES = [`events`, `offers`, `destinations`];
-const STORE_VER = `v12`;
-const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
-
+import {STORE_NAMES} from '../const.js';
 export default class Store {
   constructor(storage) {
     this._storage = storage;

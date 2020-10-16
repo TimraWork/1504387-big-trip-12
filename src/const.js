@@ -49,3 +49,8 @@ export const MenuItem = {
   TABLE: `Table`,
   STATS: `Stats`
 };
+
+const STORE_NAME = `bigtrip`;
+const STORE_PREFIXES = [`events`, `offers`, `destinations`];
+const STORE_VER = `v12`;
+export const STORE_NAMES = STORE_PREFIXES.map((store) => `${STORE_NAME}-` + store + `-${STORE_VER}`);
