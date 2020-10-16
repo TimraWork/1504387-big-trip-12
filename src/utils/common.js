@@ -15,3 +15,9 @@ export const formatDateTime = (date) => {
 export const formatMonthDate = (date) => {
   return moment(date).format(`MMM DD`);
 };
+
+export const formatUrl = (url) => {
+  const [protocol, host] = url.split(`:`);
+
+  return `${protocol}s:${host}`;
+};

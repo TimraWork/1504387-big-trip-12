@@ -53,7 +53,7 @@ Promise.all([
 });
 
 window.addEventListener(`load`, () => {
-  navigator.serviceWorker.register(`/sw.js`);
+  navigator.serviceWorker.register(`./sw.js`);
 });
 
 window.addEventListener(`online`, () => {

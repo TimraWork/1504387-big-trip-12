@@ -1,6 +1,6 @@
 import SmartView from "./smart.js";
 import {EventType} from '../const.js';
-import {formatDateTime} from '../utils/common.js';
+import {formatDateTime, formatUrl} from '../utils/common.js';
 import {formatEventType, capitalizeFirstLetter, getOffers, validateDestination, validatePrice, validateDate} from '../utils/event.js';
 
 import flatpickr from "flatpickr";
@@ -24,7 +24,7 @@ const createPhotosTemplate = (photos) => {
             <div class="event__photos-tape">
               ${photos
                   .map((photo)=> {
-                    return `<img class="event__photo" src="${photo.src}" alt="${photo.description}">`;
+                    return `<img class="event__photo" src="${formatUrl(photo.src)}" alt="${photo.description}">`;
                   })
                   .join(``)}
             </div>
